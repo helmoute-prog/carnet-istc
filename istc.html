@@ -1,0 +1,616 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Carnet ISTC</title>
+<meta name="description" content="Fiches et entraînement ISTC">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Layout : carnet de terrain. Bandeau collé en haut avec 3 onglets, une seule colonne de 860px max. */
+:root{color-scheme:light;
+  --bg:#ECEEE5; --surface:#F8F9F3; --sunk:#E0E3D5; --ink:#1C2117; --muted:#586049; --line:#C6CBB8;
+  --olive:#4A5A2C; --olive-soft:#DDE3CC; --accent:#C9450E; --accent-ink:#FFFFFF;
+  --good:#2B7548; --good-bg:#DAEADB; --bad:#B02A1C; --bad-bg:#F5DDD8;
+  --f-display:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
+  --f-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#12160F; --surface:#1A1F15; --sunk:#232A1C; --ink:#E3E7D8; --muted:#9BA48C; --line:#323B29;
+  --olive:#A9BA7E; --olive-soft:#2A3320; --accent:#FF8448; --accent-ink:#1A0C04;
+  --good:#6FCB8E; --good-bg:#1D3326; --bad:#FF8A7A; --bad-bg:#3A1E1A; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#12160F; --surface:#1A1F15; --sunk:#232A1C; --ink:#E3E7D8; --muted:#9BA48C; --line:#323B29;
+  --olive:#A9BA7E; --olive-soft:#2A3320; --accent:#FF8448; --accent-ink:#1A0C04;
+  --good:#6FCB8E; --good-bg:#1D3326; --bad:#FF8A7A; --bad-bg:#3A1E1A; color-scheme:dark }
+
+*{box-sizing:border-box}
+html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;-webkit-text-size-adjust:100%;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 48px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:860px;margin:0 auto}
+.mono{font-family:var(--f-mono)}
+h1,h2,h3{font-family:var(--f-display);text-transform:uppercase;letter-spacing:.02em;line-height:1.05;text-wrap:balance;margin:0}
+.lbl{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+/* Bandeau */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:2px solid var(--ink);margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)))}
+.top-in{max-width:860px;margin:0 auto;padding:12px max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:10px}
+.brand{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand h1{font-size:34px;font-weight:900}
+.brand h1 span{color:var(--accent)}
+.who{font-family:var(--f-mono);font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.dot.ok{background:var(--good)}
+.tabs{display:flex;gap:4px;overflow-x:auto}
+.tab{appearance:none;border:0;background:none;padding:8px 14px 10px;font-family:var(--f-display);font-weight:800;font-size:19px;text-transform:uppercase;letter-spacing:.03em;color:var(--muted);cursor:pointer;border-bottom:4px solid transparent;margin-bottom:-2px;white-space:nowrap}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.tab:hover{color:var(--ink)}
+
+[hidden]{display:none!important}
+img{max-width:100%}
+main{display:flex;flex-direction:column;gap:20px;padding-top:22px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:18px}
+.stack{display:flex;flex-direction:column;gap:14px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.note{font-size:14px;color:var(--muted);margin:0}
+.banner{font-size:14px;padding:10px 12px;border-radius:6px;background:var(--olive-soft);color:var(--ink);margin:0}
+
+/* Boutons */
+.btn{appearance:none;border:2px solid var(--ink);background:var(--surface);padding:9px 16px;border-radius:4px;font-weight:600;cursor:pointer;min-height:44px}
+.btn:hover{background:var(--sunk)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{filter:brightness(1.07)}
+.btn.small{min-height:34px;padding:5px 10px;font-size:14px;border-width:1px}
+.btn:disabled{opacity:.45;cursor:default}
+.chip{appearance:none;border:1px solid var(--line);background:var(--surface);padding:7px 12px;border-radius:999px;cursor:pointer;font-size:14px;min-height:38px}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+/* Accueil entraînement */
+.setup h2{font-size:28px}
+.field{display:flex;flex-direction:column;gap:8px}
+.themes{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+.th{border:1px solid var(--line);border-radius:6px;padding:12px;background:var(--surface);display:flex;flex-direction:column;gap:8px;min-width:0}
+.th h3{font-size:20px}
+.bar{height:6px;background:var(--sunk);border-radius:3px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--olive)}
+.th .nums{font-family:var(--f-mono);font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.weak{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.weak li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-top:1px solid var(--line);font-size:14px}
+.weak li:first-child{border-top:0}
+.weak .ko{font-family:var(--f-mono);color:var(--bad);white-space:nowrap}
+
+/* Question */
+.q-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.prog{height:4px;background:var(--sunk);border-radius:2px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--accent);transition:width .3s}
+.prompt{font-size:21px;font-weight:600;line-height:1.35;margin:0;text-wrap:pretty}
+.choices{display:grid;gap:8px}
+.choice{appearance:none;text-align:left;border:1px solid var(--line);background:var(--surface);padding:12px 14px;border-radius:6px;cursor:pointer;display:flex;gap:12px;align-items:flex-start;min-height:48px}
+.choice:hover:not(:disabled){border-color:var(--ink)}
+.choice .k{font-family:var(--f-mono);font-size:13px;color:var(--muted);border:1px solid var(--line);border-radius:3px;padding:0 6px;flex:none;margin-top:2px}
+.choice.right{border-color:var(--good);background:var(--good-bg)}
+.choice.wrong{border-color:var(--bad);background:var(--bad-bg)}
+.choice:disabled{cursor:default}
+.answer{display:flex;gap:8px;flex-wrap:wrap}
+.answer input{flex:1 1 220px;min-width:0;border:2px solid var(--ink);background:var(--surface);padding:10px 12px;border-radius:4px;min-height:46px}
+.fb{border-radius:6px;padding:12px 14px;display:flex;flex-direction:column;gap:4px}
+.fb.ok{background:var(--good-bg)}
+.fb.ko{background:var(--bad-bg)}
+.fb strong{font-family:var(--f-display);text-transform:uppercase;font-size:20px;letter-spacing:.03em}
+.fb.ok strong{color:var(--good)} .fb.ko strong{color:var(--bad)}
+.linkbtn{appearance:none;border:0;background:none;padding:0;color:var(--olive);text-decoration:underline;cursor:pointer;font-size:14px;align-self:flex-start}
+.score{font-family:var(--f-display);font-weight:900;font-size:72px;line-height:1}
+.score small{font-size:32px;color:var(--muted)}
+.misses{list-style:none;margin:0;padding:0}
+.misses li{border-top:1px solid var(--line);padding:10px 0;font-size:15px;display:flex;flex-direction:column;gap:2px}
+.misses .a{color:var(--good);font-weight:600}
+
+/* Fiches */
+.fnav{display:flex;gap:6px;flex-wrap:wrap}
+.matiere{font-family:var(--f-mono);font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.blocks{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:14px;align-items:start}
+.block{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0;scroll-margin-top:140px}
+.block.flash{outline:3px solid var(--accent)}
+.block.wide{grid-column:1/-1}
+.block-h{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.block-h h3{font-size:22px}
+.sig{font-family:var(--f-mono);font-weight:600;font-size:13px;background:var(--ink);color:var(--bg);padding:2px 7px;border-radius:3px;white-space:nowrap}
+.phon{font-family:var(--f-mono);font-size:12px;color:var(--muted);margin:0}
+.acro{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+.acro li{display:flex;gap:10px;align-items:baseline}
+.acro .L{font-family:var(--f-display);font-weight:900;font-size:24px;width:28px;text-align:center;color:var(--accent);flex:none;line-height:1}
+.plain{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:4px}
+.lines{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px}
+.lines li{padding-left:14px;border-left:3px solid var(--olive-soft)}
+.pyr{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;align-items:center;gap:3px}
+.pyr li{background:var(--olive-soft);text-align:center;padding:6px 8px;border-radius:3px;font-weight:500;font-size:15px}
+.tblw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:7px 8px;border-top:1px solid var(--line);vertical-align:top}
+thead th{border-top:0;font-family:var(--f-mono);font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:500}
+td.term{font-weight:600;white-space:nowrap}
+.nato{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:6px}
+.nato div{border:1px solid var(--line);border-radius:4px;padding:6px 8px;display:flex;gap:8px;align-items:baseline}
+.nato b{font-family:var(--f-display);font-size:22px;color:var(--accent);width:16px}
+.fmd{max-width:300px;width:100%;height:auto;display:block;margin:4px auto}
+.fmd .s{stroke:var(--ink)} .fmd .f{fill:var(--olive-soft)} .fmd .t{fill:var(--ink)} .fmd .m{fill:var(--muted)} .fmd .x{stroke:var(--accent)}
+
+/* Classement */
+.board td,.board th{font-variant-numeric:tabular-nums}
+.board td.n{font-family:var(--f-mono)}
+.board tr.me td{background:var(--olive-soft)}
+.board .rank{font-family:var(--f-display);font-weight:900;font-size:20px;width:36px}
+.callsign{display:flex;gap:8px;flex-wrap:wrap}
+.callsign input{flex:1 1 200px;min-width:0;border:2px solid var(--ink);background:var(--surface);padding:8px 10px;border-radius:4px;min-height:44px;font-family:var(--f-mono);text-transform:uppercase}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+@media (max-width:520px){.tab{font-size:17px;padding:8px 10px 10px}.brand h1{font-size:28px}.prompt{font-size:19px}.score{font-size:60px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <div class="brand">
+      <h1>Carnet <span>ISTC</span></h1>
+      <div class="who" id="who"><span class="dot" id="whoDot"></span><span id="whoTxt">Chargement…</span></div>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="Sections">
+      <button class="tab" role="tab" id="tab-entrainement" data-view="entrainement" aria-selected="true">Entraînement</button>
+      <button class="tab" role="tab" id="tab-fiches" data-view="fiches" aria-selected="false">Fiches</button>
+      <button class="tab" role="tab" id="tab-resultats" data-view="resultats" aria-selected="false">Résultats</button>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+<main>
+  <section id="v-entrainement" aria-labelledby="tab-entrainement"></section>
+  <section id="v-fiches" aria-labelledby="tab-fiches" hidden></section>
+  <section id="v-resultats" aria-labelledby="tab-resultats" hidden></section>
+</main>
+</div>
+
+<script>
+/*ENGINE-START*/
+const NATO={A:"Alpha",B:"Bravo",C:"Charlie",D:"Delta",E:"Echo",F:"Foxtrot",G:"Golf",H:"Hotel",I:"India",J:"Juliett",K:"Kilo",L:"Lima",M:"Mike",N:"November",O:"Oscar",P:"Papa",Q:"Quebec",R:"Romeo",S:"Sierra",T:"Tango",U:"Uniform",V:"Victor",W:"Whiskey",X:"X-ray",Y:"Yankee",Z:"Zulu"};
+const NATO_ALTS={A:["Alfa"],J:["Juliet"],X:["Xray","X ray"],W:["Whisky"]};
+
+/* ===== Contenu des cours. Chaque thème = une fiche. ===== */
+const CONTENT=[
+{id:"armement",matiere:"Militaire · ISTC",name:"Armement et trinôme",blocks:[
+  {id:"regles",type:"list",title:"Les 4 règles de sécurité",ordered:true,
+   items:["Une arme doit toujours être considérée comme chargée","Ne jamais pointer ou laisser pointer le canon d'une arme sur quelque chose que l'on ne veut pas détruire","Garder l'index hors de la détente tant que les organes de visée ne sont pas sur l'objectif","Être sûr de son objectif et de son environnement"],
+   countQ:"Combien y a-t-il de règles de sécurité sur l'armement ?",posQ:"Quelle est la règle de sécurité n°{n} ?",noPool:true},
+  {id:"patracdr",type:"acro",sigle:"PATRACDR",title:"Préparation du matériel",letters:[["P","Personnel"],["A","Armement"],["T","Tenue"],["R","Radio"],["A","Alimentation"],["C","Camouflage"],["D","Divers"],["R","Rassemblement"]]},
+  {id:"actes",type:"acro",sigle:"PPGARDCOCOME",title:"Les 12 actes réflexes",countQ:"Combien y a-t-il d'actes réflexes ?",
+   letters:[["P","Progresser"],["P","Se protéger"],["G","Garder la liaison"],["A","Apprécier une distance"],["R","Rendre compte"],["D","Désigner un objectif"],["C","Communiquer"],["O","Observer"],["C","Camoufler"],["O","S'orienter"],["M","Mettre en œuvre son armement"],["E","S'équiper"]]},
+  {id:"ddro",type:"acro",sigle:"DDRO",title:"Désigner un objectif",letters:[["D","Direction"],["D","Distance"],["R","Repère"],["O","Objectif"]]},
+  {id:"crendu",type:"facts",title:"Rendre compte",lines:["Je suis, je vois, je fais, je demande."],
+   qs:[{id:"ordre",q:"Rendre compte se fait en 4 temps. Lesquels ?",a:"Je suis, je vois, je fais, je demande",wrong:["Je vois, je suis, je fais, je demande","Je suis, je vois, je pense, je demande","Je suis, j'observe, j'agis, je rends compte"],qcmOnly:true},
+       {id:"t3",q:"Rendre compte. « Je suis, je vois, … , je demande ». Quel est le 3e temps ?",a:"Je fais",alts:["fais"]}]},
+  {id:"nvapd",type:"acro",sigle:"NVAPD",title:"Renseigner sur l'ennemi",letters:[["N","Nature"],["V","Volume"],["A","Attitude"],["P","Positions"],["D","Délai"]]},
+  {id:"deplacer",type:"list",title:"Actes réflexes pour se déplacer",items:["S'orienter","Progresser","Observer","Mettre en œuvre son armement","Communiquer","Rendre compte"],pool:"actes",countQ:"Combien d'actes réflexes pour se déplacer ?"},
+  {id:"poster",type:"list",title:"Actes réflexes pour se poster",items:["S'orienter","Progresser","Se camoufler","Observer","Mettre en œuvre son armement","Communiquer et rendre compte","Se protéger"],alts:{5:["Communiquer","Rendre compte"]},pool:"actes",countQ:"Combien d'actes réflexes pour se poster ?"},
+  {id:"at4",type:"list",title:"Actes réflexes pour utiliser son arme ou sa munition (AT4)",items:["Mettre en œuvre son armement","Rendre compte"],pool:"actes",countQ:"Combien d'actes réflexes pour utiliser son arme ou sa munition (AT4) ?"},
+  {id:"milieu",type:"facts",title:"Missions du trinôme en milieu ouvert",lines:["Mission dynamique = une reconnaissance","Mission statique = surveiller"],
+   qs:[{id:"dyn",q:"En milieu ouvert, une mission dynamique du trinôme, c'est quoi ?",a:"Une reconnaissance",alts:["reconnaissance","reconnaitre"],wrong:["Surveiller","Appuyer","Fouiller"]},
+       {id:"stat",q:"En milieu ouvert, une mission statique du trinôme, c'est quoi ?",a:"Surveiller",alts:["surveillance"],wrong:["Une reconnaissance","Éclairer","Assurer la liaison"]}]},
+  {id:"moicp",type:"acro",sigle:"MOICP",title:"Ordre pour une mission dynamique",letters:[["M","Mission"],["O","Objectif"],["I","Itinéraire"],["C","Conduite à tenir"],["P","Place du chef"]]},
+  {id:"zmspcp",type:"acro",sigle:"ZMSPCP",title:"Ordre pour une mission statique",letters:[["Z","Zone"],["M","Mission"],["S","Secteur"],["P","Point particulier"],["C","Conduite à tenir"],["P","Place du chef"]]},
+  {id:"safrane",type:"acro",sigle:"SAFRANE",title:"Les missions du trinôme",letters:[["S","Surveiller"],["A","Appuyer"],["F","Fouiller"],["R","Reconnaître, s'emparer de"],["A","Assurer la liaison"],["N","Neutraliser, détruire"],["E","Éclairer"]],alts:{3:["Reconnaître","S'emparer de"],5:["Neutraliser","Détruire"]}},
+  {id:"pif",type:"acro",sigle:"PIF",title:"Actes élémentaires au sein du trinôme",letters:[["P","Point à atteindre"],["I","Itinéraire"],["F","Formation"]]},
+  {id:"formations",type:"list",title:"Les formations du trinôme",items:["En ligne","En colonne","En triangle"],countQ:"Combien de formations pour le trinôme ?",extraPool:["En losange","En flèche","En carré","En dispersé"]},
+  {id:"deplacements",type:"list",title:"Les types de déplacement en trinôme",items:["En tiroir","En perroquet","Perroquet variante"],countQ:"Combien de types de déplacement en trinôme ?",extraPool:["En chenille","En bond","En tenaille","En échelon"]},
+  {id:"ffh",type:"acro",sigle:"FFH",title:"Ordres pour tomber en garde",letters:[["F","Face à"],["F","Formation"],["H","Halte"]]},
+  {id:"pmspcp",type:"acro",sigle:"PMSPCP",title:"Arrêt long",letters:[["P","Place individuelle"],["M","Mission"],["S","Secteur de surveillance"],["P","Point particulier"],["C","Conduite à tenir"],["P","Place du chef de groupe"]]},
+  {id:"zms",type:"acro",sigle:"ZMS",title:"Arrêt court",letters:[["Z","Zone d'installation du trinôme"],["M","Mission"],["S","Secteur"]]}
+]},
+{id:"transmissions",matiere:"Militaire · ISTC",name:"Transmissions",blocks:[
+  {id:"termes",type:"pairs",mode:"radio",title:"Principaux termes de procédure radio",note:"Source : page 172 de l'aide-mémoire.",pairs:[
+    ["Aperçu","J'ai compris votre message."],
+    ["Attendez","Je stoppe ma transmission pendant quelques secondes."],
+    ["Attendez terminé","J'arrête ma transmission pendant plus de quelques secondes."],
+    ["Collationner","Répétez-moi cette transmission exactement comme vous l'avez reçue."],
+    ["Contrôle radio","Quelle est la force et la lisibilité de mon émission ?"],
+    ["Correct","Ce que vous m'avez transmis est correct."],
+    ["Correction","J'ai fait une erreur dans ma transmission en cours."],
+    ["Erreur","Votre collationnement comporte une erreur. Je répète le message (ou la portion comportant l'erreur)."],
+    ["Excepté","Le ou les destinataires dont la désignation suit immédiatement sont exceptés de l'indicatif collectif."],
+    ["Faites l'aperçu","Avez-vous reçu ma communication ? L'avez-vous comprise ? Êtes-vous en mesure d'exécuter ?"],
+    ["Ici","Cette transmission vient de la station dont la désignation suit immédiatement."],
+    ["Je collationne","Ce qui suit est ma réponse à votre demande de collationnement."],
+    ["Je répète","Je répète la transmission ou la partie indiquée."],
+    ["Je répète jusqu'à","Je répète la transmission jusqu'au mot indiqué."],
+    ["Le mot avant","Le mot du message auquel je me réfère est celui qui précède."],
+    ["Le mot après","Le mot du message auquel je me réfère est celui qui suit."],
+    ["Parlez","Ceci est la fin de ma communication. Je vous écoute, parlez."],
+    ["Prenez message","Prenez par écrit le message qui suit."],
+    ["Reçu","J'ai bien reçu votre dernière transmission. En réponse à un contrôle radio, votre émission est forte et claire."],
+    ["Répétez","Répétez la partie indiquée."],
+    ["Séparation","Indique la séparation entre le texte et les autres parties d'un message."],
+    ["Silence (3 fois)","Cessez immédiatement toute émission."],
+    ["Silence suspendu","Reprenez les émissions normales."],
+    ["Terminé","Ceci est la fin de ma communication. Je n'ai plus rien à vous dire."],
+    ["Tout avant","La partie du message à laquelle je me réfère est tout ce qui précède."]]},
+  {id:"pieges",type:"facts",title:"À ne pas confondre",lines:["Parlez = fin de ma communication, j'attends ta réponse.","Terminé = fin de ma communication, je n'ai plus rien à dire."],
+   qs:[{id:"pt",q:"Tu as fini ton message et tu attends une réponse. Tu dis…",a:"Parlez",wrong:["Terminé","Aperçu","Reçu"]},
+       {id:"tp",q:"Tu as fini ton message et tu n'as plus rien à dire. Tu dis…",a:"Terminé",wrong:["Parlez","Aperçu","Attendez terminé"]}]},
+  {id:"reseau",type:"facts",title:"Réseau et sigles",lines:["Réseau = ensemble de stations qui travaillent entre elles suivant les mêmes caractéristiques d'exploitation.","OTT = Ordres Techniques de Transmission","OPSIC = Ordre Préparatoire Système d'Information et de Communication"],
+   qs:[{id:"def",q:"Qu'est-ce qu'un réseau ?",a:"Un ensemble de stations qui travaillent entre elles suivant les mêmes caractéristiques d'exploitation",wrong:["Un ensemble de postes radio appartenant à la même unité","L'ensemble des fréquences attribuées pour une mission","Une liaison entre deux stations sur une même fréquence"],qcmOnly:true},
+       {id:"ott",q:"Que veut dire OTT ?",a:"Ordres Techniques de Transmission",alts:["Ordre technique de transmission","Ordres techniques de transmissions"],wrong:["Ordres Tactiques de Transmission","Opérations Techniques de Terrain","Ordres de Transmission Tactique"]},
+       {id:"opsic",q:"Que veut dire OPSIC ?",a:"Ordre Préparatoire Système d'Information et de Communication",alts:["Ordre preparatoire systeme information communication","Ordre préparatoire des systèmes d'information et de communication"],wrong:["Opération Système d'Information et de Commandement","Ordre Particulier des Systèmes d'Information et de Combat","Ordre Pratique Système d'Interception et de Communication"]},
+       {id:"ottsig",q:"Quel sigle pour les « Ordres Techniques de Transmission » ?",a:"OTT",wrong:["OPSIC","OTR","OTX"]}]},
+  {id:"alphabet",type:"pairs",mode:"alpha",title:"Alphabet international (OTAN)",pairs:Object.entries(NATO)}
+]},
+{id:"topo",matiere:"Militaire · ISTC",name:"Topographie",blocks:[
+  {id:"defs",type:"facts",title:"Définitions",lines:["Nivellement = représentation sur la carte du relief du terrain.","Planimétrie = représentation sur la carte des détails naturels ou artificiels."],
+   qs:[{id:"niv",q:"Le nivellement, c'est la représentation sur la carte…",a:"du relief du terrain",wrong:["des détails naturels ou artificiels","du quadrillage UTM","des distances à l'échelle"],qcmOnly:true},
+       {id:"plan",q:"La planimétrie, c'est la représentation sur la carte…",a:"des détails naturels ou artificiels",wrong:["du relief du terrain","des courbes de niveau","des fuseaux et des bandes"],qcmOnly:true},
+       {id:"nivt",q:"Comment s'appelle la représentation du relief du terrain sur la carte ?",a:"Nivellement",alts:["le nivellement"],wrong:["Planimétrie","Altimétrie","Quadrillage"]},
+       {id:"plant",q:"Comment s'appelle la représentation des détails naturels ou artificiels sur la carte ?",a:"Planimétrie",alts:["la planimetrie"],wrong:["Nivellement","Topométrie","Cartouche"]}]},
+  {id:"utm",type:"facts",title:"Quadrillage UTM",lines:["UTM = Universal Transverse Mercator","60 fuseaux de 6° (60 × 6 = 360°)","20 bandes de 8° en latitude (20 × 8 = 160°)","Grid zone = parcelle formée par la jonction d'un fuseau et d'une bande. Il y en a 1 200 (60 × 20).","Chaque grid zone est découpée en carrés de 100 km, puis 10 km, puis 1 km.","Paris = grid zone 31U. 31 = numéro de fuseau, U = lettre de bande.","Carré de 100 km de Paris = KP. K = abscisse, P = ordonnée.","L'altitude s'exprime en Z."],
+   qs:[{id:"sig",q:"Que veut dire UTM ?",a:"Universal Transverse Mercator",alts:["Universel transverse de Mercator"],wrong:["Unité Topographique Militaire","Universal Topographic Map","Universal Terrain Mapping"]},
+       {id:"fus",q:"Combien y a-t-il de fuseaux dans le quadrillage UTM ?",a:60},
+       {id:"fusl",q:"Combien de degrés fait un fuseau ?",a:6,unit:"°"},
+       {id:"band",q:"Combien y a-t-il de bandes de latitude ?",a:20},
+       {id:"bandl",q:"Combien de degrés fait une bande ?",a:8,unit:"°"},
+       {id:"gz",q:"Combien y a-t-il de grid zones ?",a:1200},
+       {id:"gzdef",q:"Une grid zone, c'est…",a:"La jonction d'un fuseau et d'une bande",wrong:["Un carré de 100 km de côté","Un carré de 1 km de côté","La jonction de deux fuseaux"],qcmOnly:true},
+       {id:"sub",q:"Dans quel ordre on découpe une grid zone ?",a:"Carrés de 100 km, puis 10 km, puis 1 km",wrong:["Carrés de 10 km, puis 1 km, puis 100 m","Carrés de 100 km, puis 50 km, puis 10 km","Carrés de 1 000 km, puis 100 km, puis 10 km"],qcmOnly:true},
+       {id:"paris",q:"Dans quelle grid zone se trouve Paris ?",a:"31U",alts:["31 U"],wrong:["31T","32U","30U"]},
+       {id:"31",q:"Dans « 31U », que représente 31 ?",a:"Le numéro de fuseau",wrong:["La lettre de bande","Le carré de 100 km","L'altitude"],qcmOnly:true},
+       {id:"U",q:"Dans « 31U », que représente U ?",a:"La lettre de bande",wrong:["Le numéro de fuseau","L'abscisse","L'ordonnée"],qcmOnly:true},
+       {id:"kp",q:"Quel est le carré de 100 km de Paris ?",a:"KP",wrong:["PK","KU","UP"]},
+       {id:"k",q:"Dans « KP », que représente K ?",a:"L'abscisse",alts:["abscisse"],wrong:["L'ordonnée","L'altitude","La bande"]},
+       {id:"p",q:"Dans « KP », que représente P ?",a:"L'ordonnée",alts:["ordonnee"],wrong:["L'abscisse","L'altitude","Le fuseau"]},
+       {id:"z",q:"Avec quelle lettre s'exprime l'altitude ?",a:"Z",alts:["en Z"],wrong:["A","H","Y"]}]},
+  {id:"echelles",type:"facts",title:"Échelles des cartes",lines:["1/25 000 → 1 km sur le terrain = 4 cm sur la carte","1/50 000 → 1 km sur le terrain = 2 cm sur la carte","1/100 000 → 1 km sur le terrain = 1 cm sur la carte"],
+   qs:[{id:"25",q:"Sur une carte au 1/25 000, 1 km sur le terrain = combien de cm sur la carte ?",a:4,unit:"cm"},
+       {id:"50",q:"Sur une carte au 1/50 000, 1 km sur le terrain = combien de cm sur la carte ?",a:2,unit:"cm"},
+       {id:"100",q:"Sur une carte au 1/100 000, 1 km sur le terrain = combien de cm sur la carte ?",a:1,unit:"cm"}]},
+  {id:"formules",type:"calc",title:"Site, pente et triangle F M D",lines:["Le site est un angle.","Site (millièmes) = (Z objectif − Z moi) ÷ distance en km","Pente (%) = (Z objectif − Z moi) ÷ distance en m × 100","Triangle : F en haut (mètres), M barré en bas à gauche (millièmes), D en bas à droite (km).","Entre M et D on multiplie : F = M × D. De F vers M ou D on divise : M = F ÷ D et D = F ÷ M."],
+   qs:[{id:"site",q:"Le site, c'est…",a:"Un angle",wrong:["Une distance","Une pente en pourcentage","Une altitude"],qcmOnly:true},
+       {id:"fsite",q:"Quelle est la formule du site ?",a:"(Z objectif − Z moi) ÷ distance en km",wrong:["(Z objectif − Z moi) ÷ distance en m × 100","(Z objectif + Z moi) ÷ distance en km","Distance en km ÷ (Z objectif − Z moi)"],qcmOnly:true},
+       {id:"fpente",q:"Quelle est la formule de la pente en % ?",a:"(Z objectif − Z moi) ÷ distance en m × 100",wrong:["(Z objectif − Z moi) ÷ distance en km","(Z objectif − Z moi) × distance en m ÷ 100","Distance en m ÷ (Z objectif − Z moi) × 100"],qcmOnly:true},
+       {id:"tri",q:"Dans le triangle F M D, comment on trouve F ?",a:"F = M × D",wrong:["F = M ÷ D","F = D ÷ M","F = M + D"],qcmOnly:true},
+       {id:"triu",q:"Dans le triangle F M D, en quelle unité est D ?",a:"En kilomètres",alts:["km","kilometres","kilometre"],wrong:["En mètres","En millièmes","En centimètres"]}]}
+]},
+{id:"peda",matiere:"Militaire · ISTC",name:"Pédagogie militaire",blocks:[
+  {id:"paliers",type:"list",title:"Les 4 paliers de l'apprentissage",ordered:true,items:["L'attention","L'engagement actif","Le retour d'information","La consolidation"],countQ:"Combien y a-t-il de paliers de l'apprentissage ?",posQ:"Quel est le palier de l'apprentissage n°{n} ?",extraPool:["La motivation","La répétition","L'évaluation","La mémorisation"]},
+  {id:"maslow",type:"list",title:"La pyramide de Maslow",display:"pyramid",ordered:true,items:["Réussite (accomplissement)","Estime","Sociaux (appartenance)","Sécurité","Physiologiques"],alts:{0:["Réussite","Accomplissement"],2:["Sociaux","Appartenance","Social"],4:["Physiologique"]},posQ:"Pyramide de Maslow, en partant du haut, quel est le niveau n°{n} ?",countQ:"Combien de niveaux dans la pyramide de Maslow ?",extraPool:["Reconnaissance","Autonomie","Confort"],
+   facts:[{id:"base",q:"Quel niveau est à la base de la pyramide de Maslow ?",a:"Physiologiques",alts:["Physiologique","besoins physiologiques"],wrong:["Sécurité","Estime","Sociaux"]},
+          {id:"top",q:"Quel niveau est au sommet de la pyramide de Maslow ?",a:"Réussite (accomplissement)",alts:["Réussite","Accomplissement"],wrong:["Estime","Sociaux","Sécurité"]}]},
+  {id:"methodes",type:"list",title:"Les 3 méthodes pédagogiques",items:["Démonstrative","Interrogative","Magistrale"],countQ:"Combien y a-t-il de méthodes pédagogiques ?",extraPool:["Expositive","Participative","Active","Directive"]},
+  {id:"questions",type:"list",title:"Les 5 types de questions",items:["Ouverte","Miroir","Alternative","Relais","Fermée"],countQ:"Combien y a-t-il de types de questions ?",extraPool:["Directe","Rhétorique","Suggestive","Piège"]},
+  {id:"moyens",type:"list",title:"Les moyens pédagogiques",items:["Le drill","Les cas concrets","La simulation","Les évaluations","Le travail personnel"],countQ:"Combien y a-t-il de moyens pédagogiques ?",extraPool:["Le cours magistral","Le jeu de rôle","Le tutorat"]},
+  {id:"seance",type:"list",title:"La structure d'une séance",ordered:true,items:["Introduction","Développement","Application","Contrôle","Conclusion"],countQ:"Combien de parties dans la structure d'une séance ?",posQ:"Structure d'une séance, quelle est la partie n°{n} ?",extraPool:["Synthèse","Évaluation","Rappel"]}
+]}
+];
+
+/* ===== Outils ===== */
+function rand(n){return Math.floor(Math.random()*n)}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=rand(i+1);[a[i],a[j]]=[a[j],a[i]]}return a}
+function pick(a){return a[rand(a.length)]}
+const STOP=new Set(["le","la","les","l","un","une","des","de","d","du","se","s","son","sa","ses","en","a","au","aux"]);
+function norm(s){return String(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/œ/g,"oe").replace(/×/g," fois ").replace(/÷/g," divise ").replace(/\+/g," plus ").replace(/[’']/g," ").replace(/[^a-z0-9 ]/g," ").split(/\s+/).filter(w=>w&&!STOP.has(w)).join(" ")}
+function lev(a,b){if(a===b)return 0;const m=a.length,n=b.length;if(!m)return n;if(!n)return m;let p=Array.from({length:n+1},(_,j)=>j);for(let i=1;i<=m;i++){const c=[i];for(let j=1;j<=n;j++)c[j]=Math.min(p[j]+1,c[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));p=c}return p[n]}
+function textMatch(input,answers){const x=norm(input);if(!x)return false;const xs=x.replace(/ /g,"");
+  for(const a of answers){const y=norm(a);if(!y)continue;const ys=y.replace(/ /g,"");if(xs===ys)return true;
+    const tol=ys.length<=3?0:ys.length<=7?1:ys.length<=14?2:3;if(lev(xs,ys)<=tol)return true}return false}
+function numMatch(input,ans){const s=String(input).replace(",",".").replace(/[^0-9.\-]/g,"");if(!s)return false;const v=parseFloat(s);if(isNaN(v))return false;return Math.abs(v-ans)<=Math.max(Math.abs(ans)*0.02,0.05)}
+function sigleMatch(input,sig){return String(input).toUpperCase().replace(/[^A-Z0-9]/g,"")===sig.toUpperCase()}
+function splitPieces(input){return String(input).split(/[,;\n·\/]+|\s-\s/).map(s=>s.trim()).filter(Boolean)}
+function multiMatch(input,expected){ /* expected: [[answer, ...alts], ...] ; renvoie {ok, missing} */
+  const pieces=splitPieces(input);const used=new Set();const missing=[];
+  for(const alts of expected){let found=-1;for(let i=0;i<pieces.length;i++){if(used.has(i))continue;if(textMatch(pieces[i],alts)){found=i;break}}
+    if(found<0)missing.push(alts[0]);else used.add(found)}
+  return {ok:missing.length===0,missing}}
+function fmt(n){return (Math.round(n*100)/100).toString().replace(".",",")}
+function firstLetter(w){const x=String(w).replace(/^(se |s'|le |la |les |l'|en |un |une )/i,"").normalize("NFD").replace(/[̀-ͯ]/g,"");return (x[0]||"").toUpperCase()}
+function uniqByNorm(arr,exclude=[]){const seen=new Set(exclude.map(norm));const out=[];for(const a of arr){const k=norm(a);if(!k||seen.has(k))continue;seen.add(k);out.push(a)}return out}
+function ord(i){return i===0?"1re":(i+1)+"e"}
+
+/* ===== Fabriques de questions ===== */
+function QCM(prompt,correct,distractors,extra){const flat=Array.isArray(distractors[0])?distractors.flatMap(t=>shuffle(t)):shuffle(distractors);const d=uniqByNorm(flat,[correct]).slice(0,3);
+  return Object.assign({kind:"qcm",prompt,correct,choices:shuffle([correct,...d]),answerText:correct},extra||{})}
+function TYPED(prompt,answers,extra){return Object.assign({kind:"typed",prompt,answers,answerText:answers[0],check:v=>textMatch(v,answers)},extra||{})}
+function SIGLE(prompt,sig,extra){return Object.assign({kind:"typed",prompt,answers:[sig],answerText:sig,placeholder:"Sigle",check:v=>sigleMatch(v,sig)},extra||{})}
+function NUM(prompt,value,unit,extra){return Object.assign({kind:"num",prompt,answerText:fmt(value)+(unit?" "+unit:""),unit:unit||"",check:v=>numMatch(v,value)},extra||{})}
+function MULTI(prompt,expected,extra){return Object.assign({kind:"multi",prompt,expected,answerText:expected.map(e=>e[0]).join(", "),placeholder:"Sépare par des virgules",check:v=>multiMatch(v,expected).ok,missing:v=>multiMatch(v,expected).missing},extra||{})}
+function either(qcmFn,typedFn,pQcm){return Math.random()<(pQcm==null?0.55:pQcm)?qcmFn():typedFn()}
+
+function themeWords(th){const w=[];for(const b of th.blocks){if(b.type==="acro")b.letters.forEach(x=>w.push(x[1]));if(b.type==="list"&&!b.noPool)w.push(...b.items)}return uniqByNorm(w)}
+function notIn(pool,items){const ns=items.map(norm);return pool.filter(p=>{const k=norm(p);return k&&!ns.some(n=>n===k||n.includes(k)||k.includes(n))})}
+
+function buildBank(){
+  const bank=[];
+  const allSigles=[];CONTENT.forEach(t=>t.blocks.forEach(b=>{if(b.type==="acro")allSigles.push(b.sigle)}));
+  for(const th of CONTENT){
+    const pool=themeWords(th);
+    const sigles=th.blocks.filter(b=>b.type==="acro").map(b=>b.sigle);
+    const byId=Object.fromEntries(th.blocks.map(b=>[b.id,b]));
+    for(const b of th.blocks){
+      const add=(sub,make)=>bank.push({id:th.id+"."+b.id+"."+sub,theme:th.id,block:b.id,blockTitle:b.title,make});
+      const factQs=(qs)=>qs.forEach(f=>add("f-"+f.id,()=>{
+        if(typeof f.a==="number")return NUM(f.q,f.a,f.unit);
+        const answers=[f.a,...(f.alts||[])];
+        if(f.wrong&&f.qcmOnly)return QCM(f.q,f.a,f.wrong);
+        if(f.wrong){const t=/^[A-Z0-9]{2,6}$/.test(f.a)?()=>SIGLE(f.q,f.a):()=>TYPED(f.q,answers);return either(()=>QCM(f.q,f.a,f.wrong),t)}
+        return TYPED(f.q,answers)}));
+
+      if(b.type==="acro"){
+        const words=b.letters.map(x=>x[1]);const altsOf=i=>[words[i],...((b.alts&&b.alts[i])||[])];
+        b.letters.forEach(([L,w],i)=>add("l"+i,()=>{
+          const p=`Dans ${b.sigle} (${b.title.toLowerCase()}), que veut dire la ${ord(i)} lettre, « ${L} » ?`;
+          const dis=[pool.filter(x=>firstLetter(x)===L),words,pool];
+          return either(()=>QCM(p,w,dis),()=>TYPED(p,altsOf(i)),0.5)}));
+        add("sigle",()=>{const p=`Quel est le sigle pour « ${b.title} » ?`;
+          const others=shuffle(sigles.filter(s=>s!==b.sigle));const close=others.filter(s=>Math.abs(s.length-b.sigle.length)<=1);
+          return either(()=>QCM(p,b.sigle,[close,others]),()=>SIGLE(p,b.sigle),0.45)});
+        add("mots",()=>{const correct=words.join(" · ");const dis=[];
+          for(let k=0;k<6&&dis.length<3;k++){const w2=words.slice();const i=rand(w2.length);const L=b.letters[i][0];
+            const cand=notIn(shuffle(pool.filter(x=>firstLetter(x)===L)),words);const alt=cand[0]||notIn(shuffle(pool),words)[0];if(!alt)continue;w2[i]=alt;const s=w2.join(" · ");if(s!==correct&&!dis.includes(s))dis.push(s)}
+          if(b.letters.length<=8&&Math.random()<0.4)return MULTI(`Donne tous les mots de ${b.sigle} (${b.title.toLowerCase()}).`,b.letters.map((_,i)=>altsOf(i)));
+          return QCM(`Que veut dire ${b.sigle} en entier ?`,correct,dis)});
+        const intruders=notIn(pool,words);
+        if(intruders.length>=3)add("intrus",()=>{const keep=shuffle(words).slice(0,3);const intr=pick(intruders);
+          return {kind:"qcm",prompt:`Lequel de ces mots ne fait pas partie de ${b.sigle} ?`,correct:intr,choices:shuffle([intr,...keep]),answerText:intr}});
+        if(b.countQ)add("count",()=>NUM(b.countQ,words.length));
+      }
+
+      if(b.type==="list"){
+        const items=b.items;const altsOf=i=>[items[i],...((b.alts&&b.alts[i])||[])];
+        let lp=b.pool?byId[b.pool].letters.map(x=>x[1]):pool;
+        lp=notIn(uniqByNorm([...(b.extraPool||[]),...lp]),items);
+        if(b.countQ)add("count",()=>NUM(b.countQ,items.length));
+        if(!b.noPool&&lp.length>=3){
+          add("in",()=>{const c=pick(items);return QCM(`Lequel fait partie de « ${b.title} » ?`,c,lp)});
+          if(items.length>=3)add("out",()=>{const keep=shuffle(items).slice(0,3);const intr=pick(lp);
+            return {kind:"qcm",prompt:`Lequel ne fait pas partie de « ${b.title} » ?`,correct:intr,choices:shuffle([intr,...keep]),answerText:intr}});
+        }
+        if(b.ordered)items.forEach((it,i)=>add("p"+i,()=>{const p=(b.posQ||`${b.title}, quel est l'élément n°{n} ?`).replace("{n}",i+1);
+          const dis=items.filter((_,k)=>k!==i);
+          if(b.noPool)return QCM(p,it,dis);
+          return either(()=>QCM(p,it,[dis,lp]),()=>TYPED(p,altsOf(i)),0.6)}));
+        if(!b.noPool&&items.length<=7)add("all",()=>{
+          if(items.length<=3&&Math.random()<0.5){const correct=items.join(" · ");const dis=[];
+            for(let k=0;k<8&&dis.length<3;k++){const w2=items.slice();w2[rand(w2.length)]=pick(lp);const s=w2.join(" · ");if(s!==correct&&!dis.includes(s))dis.push(s)}
+            return QCM(`Lesquels forment « ${b.title} » ?`,correct,dis)}
+          return MULTI(`Cite les ${items.length} éléments de « ${b.title} ».`,items.map((_,i)=>altsOf(i)))});
+        if(b.facts)factQs(b.facts);
+      }
+
+      if(b.type==="pairs"&&b.mode==="radio"){
+        const terms=b.pairs.map(p=>p[0]),defs=b.pairs.map(p=>p[1]);
+        b.pairs.forEach(([t,d],i)=>{
+          add("d"+i,()=>QCM(`Que signifie « ${t} » ?`,d,defs.filter((_,k)=>k!==i)));
+          add("t"+i,()=>{const p=`Quel terme radio veut dire « ${d} »`;
+            return either(()=>QCM(p,t,terms.filter((_,k)=>k!==i)),()=>TYPED(p,[t,t.replace(/\s*\(.*\)/,"")]),0.6)});
+        });
+      }
+      if(b.type==="pairs"&&b.mode==="alpha"){
+        b.pairs.forEach(([L,w])=>add("a"+L,()=>TYPED(`Lettre « ${L} » en alphabet OTAN ?`,[w,...(NATO_ALTS[L]||[])],{placeholder:"Mot"})));
+        add("epel",()=>{const s=pick(allSigles.filter(x=>x.length<=7));
+          const exp=s.split("").map(L=>[NATO[L],...(NATO_ALTS[L]||[])]);
+          return Object.assign({kind:"multi",prompt:`Épelle « ${s} » en alphabet OTAN.`,placeholder:"Ex : Delta, Delta…",answerText:exp.map(e=>e[0]).join(" "),
+            check:v=>{const pc=String(v).split(/[\s,;·\/-]+/).filter(Boolean).filter(x=>!/^ray$/i.test(x));return pc.length===exp.length&&exp.every((alts,i)=>textMatch(pc[i],alts)||(alts[0]==="X-ray"&&/^x/i.test(pc[i])))},
+            missing:()=>[]})});
+      }
+      if(b.type==="facts")factQs(b.qs);
+      if(b.type==="calc"){
+        factQs(b.qs);
+        add("c-echelle",()=>{const s=pick([25000,50000,100000]);const cpk=100000/s;const label="1/"+s.toLocaleString("fr-FR");
+          if(Math.random()<0.5){const km=pick([0.5,1.5,2,2.5,3,4,5]);return NUM(`Carte au ${label}. ${fmt(km)} km sur le terrain = combien de cm sur la carte ?`,km*cpk,"cm")}
+          const cm=pick([2,3,4,5,6,8,10]);return NUM(`Carte au ${label}. ${cm} cm sur la carte = combien de km sur le terrain ?`,cm/cpk,"km")});
+        add("c-site",()=>{const zm=200+rand(60)*10;const D=pick([0.5,1,1.5,2,2.5,4]);const site=pick([10,15,20,25,30,40,50,60]);const dz=Math.round(site*D);
+          return NUM(`Tu es à ${zm} m. L'objectif est à ${zm+dz} m, à ${fmt(D)} km. Quel est le site (en millièmes) ?`,dz/D,"millièmes")});
+        add("c-pente",()=>{const d=pick([200,250,400,500,800,1000,1250,2000]);const pct=pick([2,4,5,8,10,12,15,20]);const dz=Math.round(d*pct/100);const zm=300+rand(50)*10;
+          return NUM(`Tu es à ${zm} m. Un point à ${zm+dz} m se trouve à ${d} m de distance. Quelle est la pente (en %) ?`,dz/d*100,"%")});
+        add("c-fmd",()=>{const M=pick([2,4,5,6,8,10,12,15,20]);const D=pick([0.5,1,1.5,2,2.5,3,4]);const F=M*D;const v=rand(3);
+          if(v===0)return NUM(`Un objectif est vu sous ${M} millièmes à ${fmt(D)} km. Quel est son front (en m) ?`,F,"m");
+          if(v===1)return NUM(`Un véhicule de ${fmt(F)} m de long est à ${fmt(D)} km. Sous combien de millièmes le vois-tu ?`,M,"millièmes");
+          return NUM(`Un bâtiment de ${fmt(F)} m de front est vu sous ${M} millièmes. À quelle distance est-il (en km) ?`,D,"km")});
+      }
+    }
+  }
+  return bank;
+}
+/*ENGINE-END*/
+
+/* ===== État et progression ===== */
+const BANK=buildBank();
+const BYID=Object.fromEntries(BANK.map(t=>[t.id,t]));
+const THEMES=Object.fromEntries(CONTENT.map(t=>[t.id,t]));
+const LKEY="carnet-istc-stats-v1";
+function freshStats(){return {q:{},total:0,correct:0,sessions:0,pseudo:"",updatedAt:0}}
+function cleanStats(s){const f=freshStats();if(!s||typeof s!=="object")return f;return {q:(s.q&&typeof s.q==="object")?JSON.parse(JSON.stringify(s.q)):{},total:+s.total||0,correct:+s.correct||0,sessions:+s.sessions||0,pseudo:typeof s.pseudo==="string"?s.pseudo.slice(0,24):"",updatedAt:+s.updatedAt||0}}
+function loadLocal(){try{const r=localStorage.getItem(LKEY);return r?cleanStats(JSON.parse(r)):null}catch(e){return null}}
+function saveLocal(){try{localStorage.setItem(LKEY,JSON.stringify(stats))}catch(e){}}
+let stats=loadLocal()||freshStats();
+const R={status:"local"};
+
+function rec(id,ok){const r=stats.q[id]||{ok:0,ko:0,st:0};if(ok){r.ok++;r.st=(r.st||0)+1}else{r.ko++;r.st=0}r.t=Date.now();stats.q[id]=r;stats.total++;if(ok)stats.correct++;stats.updatedAt=Date.now()}
+function mastered(id){const r=stats.q[id];return !!r&&(r.st||0)>=2}
+function isWeak(id){const r=stats.q[id];return !!r&&r.ko>0&&(r.st||0)<2}
+function weight(id){const r=stats.q[id];if(!r)return 3;const st=r.st||0;if(st>=3)return 0.35;if(st>=2)return 0.8;return 2+Math.min(r.ko,5)*1.5}
+function themeProgress(tid){const ids=BANK.filter(t=>t.theme===tid).map(t=>t.id);const m=ids.filter(mastered).length;const seen=ids.filter(i=>stats.q[i]).length;return {n:ids.length,m,seen,weak:ids.filter(isWeak).length}}
+function masteryAll(){const m=BANK.filter(t=>mastered(t.id)).length;return {m,n:BANK.length}}
+function weightedSample(ids,n){const arr=ids.map(id=>({id,w:weight(id)}));const out=[];while(out.length<n&&arr.length){const tot=arr.reduce((s,a)=>s+a.w,0);let r=Math.random()*tot;let k=0;for(;k<arr.length-1;k++){r-=arr[k].w;if(r<=0)break}out.push(arr[k].id);arr.splice(k,1)}return out}
+
+/* Sauvegarde : une écriture à la fois, regroupée après une pause */
+function queueSave(){saveLocal()}
+
+/* ===== Rendu ===== */
+const $=s=>document.querySelector(s);
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+let view="entrainement";
+function setView(v,push){if(!["entrainement","fiches","resultats"].includes(v))v="entrainement";view=v;
+  document.querySelectorAll(".tab").forEach(t=>t.setAttribute("aria-selected",t.dataset.view===v?"true":"false"));
+  ["entrainement","fiches","resultats"].forEach(k=>{$("#v-"+k).hidden=k!==v});
+  if(push){try{history.replaceState(null,"","#"+v)}catch(e){}}window.scrollTo(0,0)}
+document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{setView(t.dataset.view,true);if(t.dataset.view==="resultats")renderResults()}));
+
+function renderWho(){$("#whoDot").className="dot ok";$("#whoTxt").textContent="Progression gardée sur cet appareil"}
+
+/* --- Entraînement --- */
+let setup={themes:new Set(CONTENT.map(t=>t.id)),n:10,mode:"tout"};
+let S=null; /* session en cours */
+
+function renderTrain(){const el=$("#v-entrainement");
+  if(S&&!S.done)return renderQuestion(el);
+  if(S&&S.done)return renderEnd(el);
+  const all=masteryAll();
+  const weakIds=BANK.filter(t=>isWeak(t.id)).sort((a,b)=>(stats.q[b.id].ko-stats.q[a.id].ko)).slice(0,6);
+  const byBlock={};for(const t of BANK.filter(t=>isWeak(t.id))){const k=t.theme+"."+t.block;byBlock[k]=byBlock[k]||{t,ko:0,n:0};byBlock[k].ko+=stats.q[t.id].ko;byBlock[k].n++}
+  const weakBlocks=Object.values(byBlock).sort((a,b)=>b.ko-a.ko).slice(0,6);
+  el.innerHTML=`<div class="stack">
+  <div class="card setup stack">
+    <div class="row" style="justify-content:space-between;align-items:baseline"><h2>Nouvelle série</h2><span class="lbl">${all.m} / ${all.n} questions maîtrisées</span></div>
+    <div class="field"><span class="lbl">Thèmes</span><div class="themes">${CONTENT.map(t=>{const p=themeProgress(t.id);const on=setup.themes.has(t.id);
+      return `<button class="chip" style="border-radius:6px;text-align:left;padding:10px 12px" aria-pressed="${on}" data-theme="${t.id}">
+        <span style="display:flex;flex-direction:column;gap:6px"><strong>${esc(t.name)}</strong>
+        <span class="bar" style="width:100%"><i style="width:${p.n?Math.round(p.m/p.n*100):0}%"></i></span>
+        <span class="mono" style="font-size:12px;opacity:.8">${p.m}/${p.n} maîtrisées${p.weak?` · ${p.weak} à revoir`:""}</span></span></button>`}).join("")}</div></div>
+    <div class="field"><span class="lbl">Nombre de questions</span><div class="row">${[10,20,30].map(n=>`<button class="chip" aria-pressed="${setup.n===n}" data-n="${n}">${n}</button>`).join("")}</div></div>
+    <div class="field"><span class="lbl">Mode</span><div class="row">
+      <button class="chip" aria-pressed="${setup.mode==="tout"}" data-mode="tout">Tout, priorité aux erreurs</button>
+      <button class="chip" aria-pressed="${setup.mode==="faibles"}" data-mode="faibles">Points faibles seulement</button>
+      <button class="chip" aria-pressed="${setup.mode==="nouvelles"}" data-mode="nouvelles">Jamais vues</button></div></div>
+    <p class="note" id="setupNote"></p>
+    <div class="row"><button class="btn primary" id="go">Commencer</button></div>
+  </div>
+  ${statusBanner()}
+  <div class="card stack"><h2 style="font-size:24px">À retravailler</h2>
+    ${weakBlocks.length?`<ul class="weak">${weakBlocks.map(w=>`<li><span>${esc(w.t.blockTitle)} <span class="note" style="display:inline">· ${esc(THEMES[w.t.theme].name)}</span></span><span class="row" style="gap:10px;flex-wrap:nowrap"><span class="ko">${w.ko} erreur${w.ko>1?"s":""}</span><button class="btn small" data-drill="${w.t.theme}.${w.t.block}">Revoir</button></span></li>`).join("")}</ul>`
+      :`<p class="note">Rien pour l'instant. Les notions que tu rates apparaîtront ici et reviendront plus souvent dans tes séries.</p>`}
+  </div></div>`;
+  el.querySelectorAll("[data-theme]").forEach(b=>b.onclick=()=>{const id=b.dataset.theme;if(setup.themes.has(id)){if(setup.themes.size>1)setup.themes.delete(id)}else setup.themes.add(id);renderTrain()});
+  el.querySelectorAll("[data-n]").forEach(b=>b.onclick=()=>{setup.n=+b.dataset.n;renderTrain()});
+  el.querySelectorAll("[data-mode]").forEach(b=>b.onclick=()=>{setup.mode=b.dataset.mode;renderTrain()});
+  el.querySelectorAll("[data-drill]").forEach(b=>b.onclick=()=>drillBlock(b.dataset.drill));
+  $("#go").onclick=()=>{let ids=BANK.filter(t=>setup.themes.has(t.theme)).map(t=>t.id);let note="";
+    if(setup.mode==="faibles"){const w=ids.filter(isWeak);if(!w.length){$("#setupNote").textContent="Aucun point faible sur ces thèmes. Lance une série « Tout » d'abord.";return}ids=w}
+    if(setup.mode==="nouvelles"){const w=ids.filter(i=>!stats.q[i]);if(!w.length){$("#setupNote").textContent="Tu as déjà vu toutes les questions de ces thèmes.";return}ids=w}
+    startSession(weightedSample(ids,setup.n))};
+}
+function statusBanner(){return ""}
+
+function drillBlock(key){const [th,bl]=key.split(".");const ids=BANK.filter(t=>t.theme===th&&t.block===bl).map(t=>t.id);setView("entrainement",true);startSession(weightedSample(ids,Math.min(10,ids.length)))}
+function startSession(ids){if(!ids.length)return;S={items:ids.map(id=>({id,q:BYID[id].make(),done:false})),i:0,done:false,score:0};renderTrain();window.scrollTo(0,0)}
+
+function renderQuestion(el){const it=S.items[S.i];const tpl=BYID[it.id];const q=it.q;const th=THEMES[tpl.theme];
+  el.innerHTML=`<div class="card stack" id="qcard">
+    <div class="q-head"><span class="lbl">${esc(th.name)} · ${esc(tpl.blockTitle)}</span><span class="lbl">${S.i+1} / ${S.items.length}</span></div>
+    <div class="prog"><i style="width:${(S.i)/S.items.length*100}%"></i></div>
+    <p class="prompt">${esc(q.prompt)}</p>
+    ${q.kind==="qcm"?`<div class="choices">${q.choices.map((c,k)=>`<button class="choice" data-c="${k}"><span class="k">${k+1}</span><span>${esc(c)}</span></button>`).join("")}</div>`
+     :`<form class="answer" id="af" autocomplete="off"><input id="ans" ${q.kind==="num"?'inputmode="decimal"':""} placeholder="${esc(q.placeholder||(q.kind==="num"?"Nombre"+(q.unit?" ("+q.unit+")":""):"Ta réponse"))}" aria-label="Ta réponse"><button class="btn primary" type="submit">Valider</button></form>`}
+    <div id="fbz"></div>
+    <div class="row" style="justify-content:space-between"><button class="linkbtn" id="quit">Arrêter la série</button><button class="btn" id="next" hidden>Suivante</button></div>
+  </div>`;
+  $("#quit").onclick=()=>{if(S.items.some(x=>x.done)){S.items=S.items.filter(x=>x.done);S.done=true}else S=null;renderTrain()};
+  if(q.kind==="qcm"){el.querySelectorAll(".choice").forEach(b=>b.onclick=()=>answer(q.choices[+b.dataset.c]))}
+  else{const inp=$("#ans");setTimeout(()=>{try{inp.focus({preventScroll:true})}catch(e){}},30);$("#af").onsubmit=e=>{e.preventDefault();if(!inp.value.trim())return;answer(inp.value)}}
+  $("#next").onclick=nextQ;
+}
+function answer(given){const it=S.items[S.i];if(it.done)return;const q=it.q;
+  const ok=q.kind==="qcm"?given===q.correct:q.check(given);it.done=true;it.ok=ok;it.given=given;if(ok)S.score++;
+  rec(it.id,ok);queueSave();
+  if(q.kind==="qcm"){document.querySelectorAll(".choice").forEach(b=>{const c=q.choices[+b.dataset.c];b.disabled=true;if(c===q.correct)b.classList.add("right");else if(c===given)b.classList.add("wrong")})}
+  else{$("#ans").disabled=true;document.querySelector("#af button").disabled=true}
+  const tpl=BYID[it.id];let extra="";
+  if(!ok&&q.kind==="multi"&&q.missing){const m=q.missing(given);if(m.length&&m.length<q.expected.length)extra=`<span>Il te manquait : ${esc(m.join(", "))}</span>`}
+  $("#fbz").innerHTML=`<div class="fb ${ok?"ok":"ko"}"><strong>${ok?"Correct":"Raté"}</strong>
+    ${ok&&q.kind==="qcm"?"":`<span>Réponse : <b>${esc(q.answerText)}</b></span>`}${extra}
+    <button class="linkbtn" data-goto="${tpl.theme}.${tpl.block}">Voir la fiche « ${esc(tpl.blockTitle)} »</button></div>`;
+  $("#fbz [data-goto]").onclick=e=>gotoBlock(e.currentTarget.dataset.goto);
+  const nx=$("#next");nx.hidden=false;nx.textContent=S.i===S.items.length-1?"Voir le résultat":"Suivante";setTimeout(()=>{try{nx.focus({preventScroll:true})}catch(e){}},30);
+  renderWho();
+}
+function nextQ(){if(S.i<S.items.length-1){S.i++;renderTrain()}else{S.done=true;stats.sessions++;queueSave();renderTrain()}window.scrollTo(0,0)}
+document.addEventListener("keydown",e=>{if(view!=="entrainement"||!S||S.done)return;const it=S.items[S.i];if(!it)return;
+  if(!it.done&&it.q.kind==="qcm"&&/^[1-4]$/.test(e.key)){const c=it.q.choices[+e.key-1];if(c!=null)answer(c)}
+  else if(it.done&&e.key==="Enter"&&document.activeElement&&document.activeElement.id!=="next"){e.preventDefault();nextQ()}});
+
+function renderEnd(el){const done=S.items.filter(x=>x.done);const ok=done.filter(x=>x.ok).length;const miss=done.filter(x=>!x.ok);
+  const pct=done.length?Math.round(ok/done.length*100):0;
+  el.innerHTML=`<div class="card stack">
+    <span class="lbl">Fin de série</span>
+    <div class="score">${ok}<small> / ${done.length}</small></div>
+    <p class="note">${pct>=90?"Très solide. Les questions réussies reviendront moins souvent.":pct>=60?"Pas mal. Les erreurs vont revenir plus souvent pour être fixées.":"Ça accroche encore. Relis les fiches des questions ratées puis refais-les."}</p>
+    <div class="row">${miss.length?`<button class="btn primary" id="redo">Refaire les ${miss.length} ratée${miss.length>1?"s":""}</button>`:""}<button class="btn ${miss.length?"":"primary"}" id="again">Nouvelle série</button></div>
+  </div>
+  ${miss.length?`<div class="card stack"><h2 style="font-size:24px">Tes erreurs</h2><ul class="misses">${miss.map(m=>`<li><span>${esc(m.q.prompt)}</span><span class="note">Ta réponse : ${esc(m.given)}</span><span class="a">${esc(m.q.answerText)}</span></li>`).join("")}</ul></div>`:""}`;
+  const r=$("#redo");if(r)r.onclick=()=>startSession(shuffle(miss.map(m=>m.id)));
+  $("#again").onclick=()=>{S=null;renderTrain()};
+}
+
+/* --- Fiches --- */
+let ficheTheme=CONTENT[0].id;
+const FMD_SVG=`<svg class="fmd" viewBox="0 0 520 440" role="img" aria-label="Triangle F M D. F en haut en mètres, M en bas à gauche en millièmes, D en bas à droite en kilomètres."><polygon class="f s" points="260,20 30,400 490,400" stroke-width="4"/><line class="s" x1="145" y1="210" x2="375" y2="210" stroke-width="3"/><line class="s" x1="260" y1="210" x2="260" y2="400" stroke-width="3"/><text class="t" x="260" y="150" text-anchor="middle" font-size="66" font-weight="900" font-family="Big Shoulders Display, Impact, sans-serif">F</text><text class="m" x="260" y="186" text-anchor="middle" font-size="20" font-family="IBM Plex Mono, monospace">mètres</text><text class="t" x="175" y="320" text-anchor="middle" font-size="66" font-weight="900" font-family="Big Shoulders Display, Impact, sans-serif">M</text><line class="x" x1="143" y1="333" x2="208" y2="268" stroke-width="6"/><text class="m" x="175" y="365" text-anchor="middle" font-size="20" font-family="IBM Plex Mono, monospace">millièmes</text><text class="t" x="345" y="320" text-anchor="middle" font-size="66" font-weight="900" font-family="Big Shoulders Display, Impact, sans-serif">D</text><text class="m" x="345" y="365" text-anchor="middle" font-size="20" font-family="IBM Plex Mono, monospace">km</text><text class="m" x="260" y="430" text-anchor="middle" font-size="18" font-family="IBM Plex Mono, monospace">F = M × D   M = F ÷ D   D = F ÷ M</text></svg>`;
+function blockHTML(th,b){const head=(title,tag)=>`<div class="block-h"><h3>${esc(title)}</h3>${tag?`<span class="sig">${esc(tag)}</span>`:""}</div>`;
+  let body="",wide=false;
+  if(b.type==="acro")body=`<p class="phon">${b.sigle.split("").map(L=>NATO[L]).join(" ")}</p><ol class="acro">${b.letters.map(([L,w])=>`<li><span class="L">${L}</span><span>${esc(w)}</span></li>`).join("")}</ol>`;
+  if(b.type==="list"){if(b.display==="pyramid"){const n=b.items.length;body=`<ol class="pyr">${b.items.map((x,i)=>`<li style="width:${40+i*(60/(n-1))}%">${esc(x)}</li>`).join("")}</ol><p class="note">Du sommet vers la base.</p>`}
+    else body=`${b.ordered?"<ol":"<ul"} class="plain">${b.items.map(x=>`<li>${esc(x)}</li>`).join("")}${b.ordered?"</ol>":"</ul>"}`}
+  if(b.type==="facts"||b.type==="calc")body=`<ul class="lines">${b.lines.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>${b.type==="calc"?FMD_SVG:""}`;
+  if(b.type==="pairs"&&b.mode==="radio"){wide=true;body=`${b.note?`<p class="note">${esc(b.note)}</p>`:""}<div class="tblw"><table><thead><tr><th>Terme</th><th>Signification</th></tr></thead><tbody>${b.pairs.map(([t,d])=>`<tr><td class="term">${esc(t)}</td><td>${esc(d)}</td></tr>`).join("")}</tbody></table></div>`}
+  if(b.type==="pairs"&&b.mode==="alpha"){wide=true;body=`<p class="note">À savoir par cœur.</p><div class="nato">${b.pairs.map(([L,w])=>`<div><b>${L}</b><span>${esc(w)}</span></div>`).join("")}</div>`}
+  const n=BANK.filter(t=>t.theme===th.id&&t.block===b.id).length;
+  return `<article class="block${wide?" wide":""}" id="b-${th.id}-${b.id}">${head(b.title,b.type==="acro"?b.sigle:"")}${body}
+    <div class="row" style="justify-content:space-between;margin-top:auto"><span class="lbl">${n} question${n>1?"s":""}</span><button class="btn small" data-drill="${th.id}.${b.id}">S'entraîner</button></div></article>`}
+function renderFiches(){const el=$("#v-fiches");const th=THEMES[ficheTheme];
+  el.innerHTML=`<div class="stack"><div class="fnav">${CONTENT.map(t=>`<button class="chip" aria-pressed="${t.id===ficheTheme}" data-ft="${t.id}">${esc(t.name)}</button>`).join("")}</div>
+    <div class="stack" style="gap:4px"><span class="matiere">${esc(th.matiere)}</span><h2 style="font-size:36px">${esc(th.name)}</h2></div>
+    <div class="blocks">${th.blocks.map(b=>blockHTML(th,b)).join("")}</div></div>`;
+  el.querySelectorAll("[data-ft]").forEach(b=>b.onclick=()=>{ficheTheme=b.dataset.ft;renderFiches()});
+  el.querySelectorAll("[data-drill]").forEach(b=>b.onclick=()=>drillBlock(b.dataset.drill));
+}
+function gotoBlock(key){const [th,bl]=key.split(".");ficheTheme=th;renderFiches();setView("fiches",true);
+  requestAnimationFrame(()=>{const n=document.getElementById("b-"+th+"-"+bl);if(n){n.scrollIntoView({block:"start"});n.classList.add("flash");setTimeout(()=>n.classList.remove("flash"),1600)}})}
+
+/* --- Mes résultats --- */
+function exportText(){const all=masteryAll();const lines=["Carnet ISTC, mes résultats","Maîtrise globale : "+all.m+" / "+all.n+" questions","Réponses : "+stats.correct+" bonnes sur "+stats.total+" ("+(stats.total?Math.round(stats.correct/stats.total*100):0)+" %), "+stats.sessions+" séries",""];
+  CONTENT.forEach(t=>{const p=themeProgress(t.id);lines.push(t.name+" : "+p.m+"/"+p.n+" maîtrisées, "+p.seen+" vues, "+p.weak+" à revoir")});
+  const weak=BANK.filter(t=>isWeak(t.id)).sort((a,b)=>stats.q[b.id].ko-stats.q[a.id].ko).slice(0,25);
+  if(weak.length){lines.push("","Points faibles :");weak.forEach(t=>{const r=stats.q[t.id];lines.push("- "+THEMES[t.theme].name+" > "+t.blockTitle+" ["+t.id+"] "+r.ko+" erreur(s), "+r.ok+" réussite(s)")})}
+  return lines.join("\n")}
+let confirmReset=false;
+function renderResults(){const el=$("#v-resultats");const all=masteryAll();const pct=stats.total?Math.round(stats.correct/stats.total*100):0;
+  el.innerHTML=`<div class="stack">
+  <div class="card stack"><span class="lbl">Ma progression</span>
+    <div class="score">${all.m}<small> / ${all.n}</small></div>
+    <p class="note">Questions maîtrisées, c'est-à-dire réussies au moins 2 fois de suite. ${stats.total} réponses données, ${pct} % de réussite, ${stats.sessions} série${stats.sessions>1?"s":""}.</p>
+    <div class="tblw"><table><thead><tr><th>Thème</th><th>Maîtrisées</th><th>Vues</th><th>À revoir</th></tr></thead><tbody>${CONTENT.map(t=>{const p=themeProgress(t.id);return `<tr><td class="term">${esc(t.name)}</td><td class="mono">${p.m} / ${p.n}</td><td class="mono">${p.seen}</td><td class="mono">${p.weak}</td></tr>`}).join("")}</tbody></table></div>
+  </div>
+  <div class="card stack"><h2 style="font-size:22px">Copier mes résultats</h2>
+    <p class="note">Un résumé de ta progression et de tes points faibles, à coller où tu veux. Par exemple dans Claude pour qu'il te prépare des questions ciblées.</p>
+    <div class="row"><button class="btn primary" id="copy">Copier mes résultats</button><span class="note" id="copyNote"></span></div>
+    <textarea id="exp" readonly hidden style="width:100%;min-height:160px;font-family:var(--f-mono);font-size:13px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:8px"></textarea>
+  </div>
+  <div class="card stack"><h2 style="font-size:22px">Repartir de zéro</h2>
+    <p class="note">Efface toute ta progression sur cet appareil.</p>
+    <div class="row">${confirmReset?`<button class="btn" id="resetYes" style="border-color:var(--bad);color:var(--bad)">Oui, tout effacer</button><button class="btn" id="resetNo">Annuler</button>`:`<button class="btn" id="reset">Effacer ma progression</button>`}</div>
+  </div></div>`;
+  $("#copy").onclick=async()=>{const txt=exportText();const ta=$("#exp");ta.value=txt;
+    try{await navigator.clipboard.writeText(txt);$("#copyNote").textContent="Copié. Colle-le dans Claude.";ta.hidden=true}
+    catch(e){ta.hidden=false;ta.focus();ta.select();$("#copyNote").textContent="Sélectionne le texte et copie-le."}};
+  const r=$("#reset");if(r)r.onclick=()=>{confirmReset=true;renderResults()};
+  const n=$("#resetNo");if(n)n.onclick=()=>{confirmReset=false;renderResults()};
+  const y=$("#resetYes");if(y)y.onclick=()=>{stats=freshStats();saveLocal();confirmReset=false;S=null;renderAll()};
+}
+
+function renderAll(){renderTrain();renderFiches();if(view==="resultats")renderResults();renderWho()}
+
+/* ===== Démarrage ===== */
+(function boot(){const h=(location.hash||"").replace("#","");setView(h||"entrainement",false);renderAll()})();
+
+</script>
+</body>
+</html>

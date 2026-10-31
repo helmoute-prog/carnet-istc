@@ -4,6 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Carnet ISTC</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#F3F4F3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#121313" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Carnet ISTC">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="description" content="Fiches et entraînement ISTC">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1073,6 +1082,8 @@ function renderAll(){renderTrain();renderFiches();if(view==="controles")renderCt
 /* ===== Démarrage ===== */
 (function boot(){const h=(location.hash||"").replace("#","");setView(h||"entrainement",false);renderAll()})();
 
+
+if("serviceWorker" in navigator&&location.protocol.startsWith("http")){window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js").catch(()=>{})})}
 </script>
 </body>
 </html>

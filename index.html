@@ -9,22 +9,22 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
 <style>
-/* Layout : DA « Kaki moderne ». Sable et kaki profond, formes arrondies, une colonne de 860px max avec onglets collés en haut. */
+/* Layout : DA « Sauge ». Vert sauge pâle, anthracite, cartes blanches arrondies, bleu ardoise en touche. Une colonne de 860px max, onglets collés en haut. */
 :root{color-scheme:light;
-  --bg:#E9E4D8; --surface:#F6F2E9; --sunk:#DFD8C7; --ink:#2C3320; --muted:#6E6A5A; --line:#D3CBB8;
-  --olive:#4F5D2F; --olive-soft:#DCE0C6; --accent:#A0522D; --accent-ink:#FFFFFF;
-  --good:#2E7D4F; --good-bg:#D8EAD6; --bad:#A63A2B; --bad-bg:#F1DAD3;
+  --bg:#EEF2EC; --surface:#FFFFFF; --sunk:#E3E9E0; --ink:#262B27; --muted:#687265; --line:#D8E0D4;
+  --olive:#557A5C; --olive-soft:#DDE8DC; --accent:#4F6D8F; --accent-ink:#FFFFFF;
+  --good:#22804F; --good-bg:#DCF1E3; --bad:#B23A3A; --bad-bg:#F6DEDC;
   --f-display:"Manrope","Segoe UI",system-ui,sans-serif;
   --f-body:"Manrope","Segoe UI",system-ui,sans-serif;
   --f-mono:"Manrope","Segoe UI",system-ui,sans-serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#161912; --surface:#1F2419; --sunk:#2A3022; --ink:#E9E4D8; --muted:#A6A18F; --line:#353C2B;
-  --olive:#AEBF82; --olive-soft:#2E3723; --accent:#E39A6B; --accent-ink:#1A0F08;
+  --bg:#161A17; --surface:#1E2420; --sunk:#28302A; --ink:#E6ECE4; --muted:#9DA89A; --line:#323B34;
+  --olive:#9CC2A2; --olive-soft:#263329; --accent:#93B3D6; --accent-ink:#0F1720;
   --good:#7FCB93; --good-bg:#1E3326; --bad:#F0907D; --bad-bg:#3B2420; color-scheme:dark }}
 :root[data-theme="dark"]{
-  --bg:#161912; --surface:#1F2419; --sunk:#2A3022; --ink:#E9E4D8; --muted:#A6A18F; --line:#353C2B;
-  --olive:#AEBF82; --olive-soft:#2E3723; --accent:#E39A6B; --accent-ink:#1A0F08;
+  --bg:#161A17; --surface:#1E2420; --sunk:#28302A; --ink:#E6ECE4; --muted:#9DA89A; --line:#323B34;
+  --olive:#9CC2A2; --olive-soft:#263329; --accent:#93B3D6; --accent-ink:#0F1720;
   --good:#7FCB93; --good-bg:#1E3326; --bad:#F0907D; --bad-bg:#3B2420; color-scheme:dark }
 
 *{box-sizing:border-box}
@@ -54,6 +54,19 @@ h1,h2,h3{font-family:var(--f-display);font-weight:800;letter-spacing:-.01em;line
 .tab:hover{color:var(--ink)}
 
 [hidden]{display:none!important}
+@keyframes inUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes inFade{from{opacity:0}to{opacity:1}}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.03)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:none}20%{transform:translateX(-6px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(2px)}}
+.anim{animation:inUp .28s cubic-bezier(.2,.8,.2,1) both}
+.vin{animation:inFade .2s ease both}
+.choice.right{animation:pop .35s ease}
+.choice.wrong{animation:shake .4s ease}
+.fb{animation:inUp .22s ease both}
+.btn,.chip,.choice,.tab{transition:background-color .15s,border-color .15s,color .15s,transform .12s,filter .15s}
+.btn:active,.chip:active,.choice:active:not(:disabled){transform:scale(.97)}
+.autonext{font-size:13px;color:var(--muted)}
+@media (prefers-reduced-motion: reduce){.anim,.vin,.fb,.choice.right,.choice.wrong{animation:none}}
 .ctrlchip{align-self:flex-start;font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--olive);background:var(--olive-soft);border-radius:999px;padding:3px 9px}
 .ta{width:100%;min-width:0;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);padding:10px 12px;border-radius:12px;font:inherit;resize:vertical}
 .fb.self{background:var(--sunk)}
@@ -95,8 +108,8 @@ main{display:flex;flex-direction:column;gap:20px;padding-top:22px}
 .btn.small{min-height:36px;padding:6px 12px;font-size:14px;border-radius:10px}
 .btn:disabled{opacity:.45;cursor:default}
 .chip{appearance:none;border:0;background:var(--sunk);color:var(--ink);padding:8px 14px;border-radius:999px;cursor:pointer;font-size:14px;font-weight:600;min-height:38px}
-.chip[aria-pressed="true"]{background:var(--olive);color:var(--surface)}
-.chip[aria-pressed="true"] .bar{background:color-mix(in srgb,var(--surface) 35%,transparent)} .chip[aria-pressed="true"] .bar i{background:var(--surface)}
+.chip[aria-pressed="true"]{background:var(--olive-soft);color:var(--ink);box-shadow:inset 0 0 0 2px var(--olive)}
+.chip[aria-pressed="true"] .bar{background:var(--surface)}
 
 /* Accueil entraînement */
 .setup h2{font-size:26px}
@@ -773,11 +786,12 @@ function queueSave(){saveLocal()}
 const $=s=>document.querySelector(s);
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 let view="entrainement";
-function setView(v,push){if(!["entrainement","fiches","controles","resultats"].includes(v))v="entrainement";view=v;
+const SCR={};
+function setView(v,push,keep){if(!["entrainement","fiches","controles","resultats"].includes(v))v="entrainement";SCR[view]=window.scrollY;const same=v===view;view=v;
   document.querySelectorAll(".tab").forEach(t=>t.setAttribute("aria-selected",t.dataset.view===v?"true":"false"));
-  ["entrainement","fiches","controles","resultats"].forEach(k=>{$("#v-"+k).hidden=k!==v});
-  if(push){try{history.replaceState(null,"","#"+v)}catch(e){}}window.scrollTo(0,0)}
-document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{setView(t.dataset.view,true);if(t.dataset.view==="resultats")renderResults();if(t.dataset.view==="controles")renderCtrl()}));
+  ["entrainement","fiches","controles","resultats"].forEach(k=>{const el=$("#v-"+k);el.hidden=k!==v;if(k===v&&!same){el.classList.remove("vin");void el.offsetWidth;el.classList.add("vin")}});
+  if(push){try{history.replaceState(null,"","#"+v)}catch(e){}}window.scrollTo(0,keep?(SCR[v]||0):0)}
+document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{setView(t.dataset.view,true,true);if(t.dataset.view==="resultats")renderResults();if(t.dataset.view==="controles")renderCtrl()}));
 
 function renderWho(){$("#whoDot").className="dot ok";$("#whoTxt").textContent="Progression gardée sur cet appareil"}
 
@@ -828,10 +842,10 @@ function drillBlock(key){const [th,bl]=key.split(".");const ids=BANK.filter(t=>t
 function startSession(ids){if(!ids.length)return;S={items:ids.map(id=>({id,q:BYID[id].make(),done:false})),i:0,done:false,score:0};renderTrain();window.scrollTo(0,0)}
 
 function renderQuestion(el){const it=S.items[S.i];const tpl=BYID[it.id];const q=it.q;const th=THEMES[tpl.theme];
-  el.innerHTML=`<div class="card stack" id="qcard">
+  el.innerHTML=`<div class="card stack anim" id="qcard">
     <div class="q-head"><span class="lbl">${esc(th.name)} · ${esc(tpl.blockTitle)}</span><span class="lbl">${S.i+1} / ${S.items.length}</span></div>
     ${tpl.ctrl?`<span class="ctrlchip">Tombé au contrôle ${esc(tpl.ctrl)}</span>`:""}
-    <div class="prog"><i style="width:${(S.i)/S.items.length*100}%"></i></div>
+    <div class="prog"><i id="progi" style="width:${Math.max(0,S.i-1)/S.items.length*100}%"></i></div>
     <p class="prompt">${esc(q.prompt)}</p>${q.fig||""}
     ${q.kind==="self"?`<form class="stack" id="sf" style="gap:8px" autocomplete="off"><textarea id="sans" rows="5" class="ta" placeholder="Écris ta réponse, puis compare avec le corrigé" aria-label="Ta réponse"></textarea><div class="row"><button class="btn primary" type="submit">Voir le corrigé</button></div></form>`:q.kind==="qcm"?`<div class="choices">${q.choices.map((c,k)=>`<button class="choice" data-c="${k}"><span class="k">${k+1}</span><span>${esc(c)}</span></button>`).join("")}</div>`
      :`<form class="answer" id="af" autocomplete="off"><input id="ans" ${q.kind==="num"?'inputmode="decimal"':""} placeholder="${esc(q.placeholder||(q.kind==="num"?"Nombre"+(q.unit?" ("+q.unit+")":""):"Ta réponse"))}" aria-label="Ta réponse"><button class="btn primary" type="submit">Valider</button></form>`}
@@ -843,6 +857,7 @@ function renderQuestion(el){const it=S.items[S.i];const tpl=BYID[it.id];const q=
   else if(q.kind==="self"){$("#sf").onsubmit=e=>{e.preventDefault();revealSelf()}}
   else{const inp=$("#ans");setTimeout(()=>{try{inp.focus({preventScroll:true})}catch(e){}},30);$("#af").onsubmit=e=>{e.preventDefault();if(!inp.value.trim())return;answer(inp.value)}}
   $("#next").onclick=nextQ;
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{const pi=$("#progi");if(pi)pi.style.width=(S.i/S.items.length*100)+"%"}));
 }
 function revealSelf(){const it=S.items[S.i];if(it.done)return;const q=it.q;const ta=$("#sans");ta.readOnly=true;document.querySelector("#sf button").hidden=true;
   $("#fbz").innerHTML=`<div class="fb self"><span class="lbl">Corrigé</span><span class="model">${esc(q.answerText)}</span><span class="note">Compare honnêtement. Tu l'avais ?</span>
@@ -864,6 +879,7 @@ function answer(given,forced,selfMark){const it=S.items[S.i];if(it.done)return;c
     <button class="linkbtn" data-goto="${tpl.theme}.${tpl.block}">Voir la fiche « ${esc(tpl.blockTitle)} »</button></div>`;
   $("#fbz [data-goto]").onclick=e=>gotoBlock(e.currentTarget.dataset.goto);
   const nx=$("#next");nx.hidden=false;nx.textContent=S.i===S.items.length-1?"Voir le résultat":"Suivante";setTimeout(()=>{try{nx.focus({preventScroll:true})}catch(e){}},30);
+  if(ok){const myI=S.i,myS=S;setTimeout(()=>{if(S===myS&&S.i===myI&&!S.done&&view==="entrainement")nextQ()},q.kind==="qcm"?750:1100)}
   renderWho();
 }
 function nextQ(){if(S.i<S.items.length-1){S.i++;renderTrain()}else{S.done=true;stats.sessions++;queueSave();renderTrain()}window.scrollTo(0,0)}

@@ -153,6 +153,7 @@ main{display:flex;flex-direction:column;gap:20px;padding-top:22px}
 .acro li{display:flex;gap:10px;align-items:baseline}
 .acro .L{font-family:var(--f-display);font-weight:800;font-size:22px;width:28px;text-align:center;color:var(--accent);flex:none;line-height:1}
 .plain{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:4px}
+.refl li{display:list-item}.refl li>span:first-child{margin-right:8px}.rn{display:inline-flex;gap:4px;vertical-align:1px}.rn b{font-size:12px;font-weight:800;color:var(--surface);background:var(--accent);border-radius:999px;min-width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;padding:0 6px;font-variant-numeric:tabular-nums}
 .lines{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px}
 .lines li{padding-left:14px;border-left:3px solid var(--olive-soft)}
 .pyr{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;align-items:center;gap:3px}
@@ -891,6 +892,9 @@ function blockHTML(th,b){const head=(title,tag)=>`<div class="block-h"><h3>${esc
   let body="",wide=false;
   if(b.type==="acro")body=`<p class="phon">${b.sigle.split("").map(L=>NATO[L]).join(" ")}</p><ol class="acro">${b.letters.map(([L,w])=>`<li><span class="L">${L}</span><span>${esc(w)}</span></li>`).join("")}</ol>`;
   if(b.type==="list"){if(b.display==="pyramid"){const n=b.items.length;body=`<ol class="pyr">${b.items.map((x,i)=>`<li style="width:${40+i*(60/(n-1))}%">${esc(x)}</li>`).join("")}</ol><p class="note">Du sommet vers la base.</p>`}
+    else if(b.pool){const ref=th.blocks.find(x=>x.id===b.pool);const words=ref.letters.map(l=>norm(l[1]));
+      const numOf=x=>x.split(/ et /).map(p=>{const k=norm(p);let i=words.indexOf(k);if(i<0)i=words.findIndex(w=>w.includes(k)||k.includes(w));return i>=0?i+1:null}).filter(Boolean);
+      body=`<p class="note">Le numéro = sa place dans les 12 actes réflexes (${esc(ref.sigle)}).</p><ol class="plain refl">${b.items.map(x=>`<li><span>${esc(x)}</span><span class="rn">${numOf(x).map(n=>`<b>${n}</b>`).join("")}</span></li>`).join("")}</ol>`}
     else body=`${b.ordered?"<ol":"<ul"} class="plain">${b.items.map(x=>`<li>${esc(x)}</li>`).join("")}${b.ordered?"</ol>":"</ul>"}`}
   if(b.type==="facts"||b.type==="calc")body=`<ul class="lines">${b.lines.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>${b.type==="calc"?FMD_SVG:""}`;
   if(b.type==="pairs"&&(b.mode==="radio"||b.mode==="def")){wide=b.pairs.length>6;const c=b.cols||["Terme","Signification"];body=`<div class="tblw"><table><thead><tr><th>${esc(c[0])}</th><th>${esc(c[1])}</th></tr></thead><tbody>${b.pairs.map(([t,d])=>`<tr><td class="term">${esc(t)}</td><td>${esc(d)}</td></tr>`).join("")}</tbody></table></div>`}

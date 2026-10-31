@@ -9,9 +9,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
 <style>
-/* Layout : DA « Sauge ». Vert sauge pâle, anthracite, cartes blanches arrondies, bleu ardoise en touche. Une colonne de 860px max, onglets collés en haut. */
+/* Layout : DA « Sauge ». Fond gris neutre, accents vert sauge, anthracite, cartes blanches arrondies, bleu ardoise en touche. Une colonne de 860px max, onglets collés en haut. */
 :root{color-scheme:light;
-  --bg:#EEF2EC; --surface:#FFFFFF; --sunk:#E3E9E0; --ink:#262B27; --muted:#687265; --line:#D8E0D4;
+  --bg:#F3F4F3; --surface:#FFFFFF; --sunk:#E9EBE9; --ink:#232625; --muted:#666B68; --line:#DDE0DE;
   --olive:#557A5C; --olive-soft:#DDE8DC; --accent:#4F6D8F; --accent-ink:#FFFFFF;
   --good:#22804F; --good-bg:#DCF1E3; --bad:#B23A3A; --bad-bg:#F6DEDC;
   --f-display:"Manrope","Segoe UI",system-ui,sans-serif;
@@ -19,12 +19,12 @@
   --f-mono:"Manrope","Segoe UI",system-ui,sans-serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#161A17; --surface:#1E2420; --sunk:#28302A; --ink:#E6ECE4; --muted:#9DA89A; --line:#323B34;
-  --olive:#9CC2A2; --olive-soft:#263329; --accent:#93B3D6; --accent-ink:#0F1720;
+  --bg:#121313; --surface:#1C1D1E; --sunk:#27292A; --ink:#ECEDED; --muted:#A0A4A2; --line:#323435;
+  --olive:#9CC2A2; --olive-soft:#24302A; --accent:#93B3D6; --accent-ink:#0F1720;
   --good:#7FCB93; --good-bg:#1E3326; --bad:#F0907D; --bad-bg:#3B2420; color-scheme:dark }}
 :root[data-theme="dark"]{
-  --bg:#161A17; --surface:#1E2420; --sunk:#28302A; --ink:#E6ECE4; --muted:#9DA89A; --line:#323B34;
-  --olive:#9CC2A2; --olive-soft:#263329; --accent:#93B3D6; --accent-ink:#0F1720;
+  --bg:#121313; --surface:#1C1D1E; --sunk:#27292A; --ink:#ECEDED; --muted:#A0A4A2; --line:#323435;
+  --olive:#9CC2A2; --olive-soft:#24302A; --accent:#93B3D6; --accent-ink:#0F1720;
   --good:#7FCB93; --good-bg:#1E3326; --bad:#F0907D; --bad-bg:#3B2420; color-scheme:dark }
 
 *{box-sizing:border-box}
@@ -48,7 +48,7 @@ h1,h2,h3{font-family:var(--f-display);font-weight:800;letter-spacing:-.01em;line
 .who{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--muted)}
 .dot.ok{background:var(--good)}
-.tabs{display:flex;gap:4px;overflow-x:auto}
+.tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}
 .tab{appearance:none;border:0;background:none;padding:8px 12px 10px;font-family:var(--f-body);font-weight:700;font-size:16px;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-1px;white-space:nowrap}
 .tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--olive)}
 .tab:hover{color:var(--ink)}
@@ -441,6 +441,9 @@ const CONTENT=[
    qs:[{id:"lb",q:"Quel est le grand texte qui fait la doctrine de la défense ?",a:"Le Livre blanc",alts:["livre blanc"],wrong:["Le Code de la défense","La Constitution","Le Traité de l'Atlantique Nord"]},
        {id:"budget",q:"Quel est le budget 2024-2030 de la défense (en milliards d'euros) ?",a:413,unit:"milliards €"},
        {id:"budgetq",q:"Le budget de la défense pour 2024-2030, c'est…",a:"413 milliards d'euros",wrong:["295 milliards d'euros","500 milliards d'euros","41,3 milliards d'euros"],qcmOnly:true}]},
+  {id:"c3t",type:"facts",title:"C3T",lines:["C3T = Concept commun de combat terrestre"],
+   qs:[{id:"sig",q:"Que veut dire C3T ?",a:"Concept commun de combat terrestre",alts:["concept commun du combat terrestre"],wrong:["Commandement des combats terrestres et tactiques","Cadre commun du combat tactique","Centre de commandement du combat terrestre"]},
+       {id:"rev",q:"Quel sigle pour le « Concept commun de combat terrestre » ?",a:"C3T",wrong:["CCT","C2T","CTT"]}]},
   {id:"fonctions",type:"list",title:"Les 6 fonctions stratégiques",note:"Liste ajoutée par Claude, ton cours dit juste qu'il y en a 6.",items:["Connaissance et anticipation","Dissuasion","Protection","Prévention","Intervention","Influence"],alts:{0:["Connaissance","Anticipation"]},countQ:"Combien y a-t-il de fonctions stratégiques ?",extraPool:["Projection","Coopération","Cyberdéfense","Souveraineté"]},
   {id:"interets",type:"pairs",mode:"def",title:"Les 3 niveaux d'intérêts",cols:["Intérêts","Ce que ça recouvre"],qDef:"Les {t}, c'est quoi ?",qTerm:"Quels intérêts recouvrent {d} ?",
    pairs:[["Intérêts vitaux","le territoire et la population"],["Intérêts stratégiques","l'économie et l'énergie"],["Intérêts de puissance","la diplomatie et le rayonnement international"]],

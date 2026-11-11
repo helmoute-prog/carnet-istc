@@ -998,14 +998,14 @@ function renderResults(){const el=$("#v-resultats");const all=masteryAll();const
 const X=a=>a.map(x=>x.split("|"));
 const CONTROLES=[
 {id:"prochain",title:"Prochain contrôle",skipped:"Questions du prochain contrôle. Barème pas encore connu, 2 points par question et 5 pour la définition.",items:[
- {q:"Donner les actes élémentaires du trinôme.",pts:2,type:"list",expect:X(["Se déplacer","S'arrêter tomber en garde|Tomber en garde|S'arrêter","Utiliser ses armes|Utiliser son arme"])},
- {q:"Donner les 3 modes de progression du trinôme.",pts:2,type:"list",expect:X(["La marche|Marche","Le bond|Bond","L'appui mutuel|Appui mutuel"])},
- {q:"Donner le commandement du trinôme pour se déplacer et pour s'arrêter (tomber en garde).",pts:2,type:"list",expect:X(["Point à atteindre","Itinéraire","Formation","Face à","Formation","Halte"])},
- {q:"Donner l'ordre d'arrêt et l'ordre de tir.",pts:2,type:"list",expect:X(["Zone|Zone d'installation|Zone d'installation du trinôme","Mission","Secteur","Consommation","Objectif","Feu"])},
- {q:"Donner les missions du trinôme.",pts:2,type:"list",expect:X(["Surveiller","Appuyer","Fouiller","Reconnaître|Reconnaitre|S'emparer de","Assurer la liaison","Neutraliser – détruire|Neutraliser|Détruire|Neutraliser détruire","Éclairer"])},
- {q:"Donner la définition et les composantes de la mission SURVEILLER.",pts:5,type:"self",model:"Définition = Mission qui consiste pour une équipe (un trinôme), à partir d'un emplacement choisi ou désigné, à observer un secteur nettement délimité pour déceler toute activité ou indice d'activité ennemi (terrestre ou aérienne), dans le but d'alerter et renseigner son chef, afin d'assurer la sûreté du groupe.\nComposantes (se poster, dans l'ordre) = S'orienter, progresser, se camoufler, observer, mettre en œuvre son armement, communiquer et rendre compte, se protéger."},
- {q:"Quelle est la réaction d'une équipe surprise à courte distance ?",pts:2,type:"text",answers:["Riposte, poste, riposte"],re:["riposte\\W+poste\\W+riposte"],corr:"Riposte, poste, riposte"},
- {q:"Donner l'ordre de déplacement du trinôme pour une mission dynamique.",pts:2,type:"list",expect:X(["Mission","Objectif","Itinéraire","Conduite à tenir","Place du chef"])}]},
+ {q:"Donner les actes élémentaires du trinôme.",pts:2,type:"list",full:"Se déplacer, s'arrêter et tomber en garde, utiliser ses armes.",expect:X(["Se déplacer","S'arrêter tomber en garde|Tomber en garde|S'arrêter","Utiliser ses armes|Utiliser son arme"])},
+ {q:"Donner les 3 modes de progression du trinôme.",full:"La marche, le bond, l'appui mutuel.",pts:2,type:"list",expect:X(["La marche|Marche","Le bond|Bond","L'appui mutuel|Appui mutuel"])},
+ {q:"Donner le commandement du trinôme pour se déplacer et pour s'arrêter (tomber en garde).",full:"Se déplacer = PIF\nPoint à atteindre, Itinéraire, Formation\n\nS'arrêter, tomber en garde = FFH\nFace à, Formation, Halte",pts:2,type:"list",expect:X(["Point à atteindre","Itinéraire","Formation","Face à","Formation","Halte"])},
+ {q:"Donner l'ordre d'arrêt et l'ordre de tir.",full:"Ordre d'arrêt (arrêt court) = ZMS\nZone d'installation du trinôme, Mission, Secteur\n\nOrdre de tir (fusil d'assaut) = COF\nConsommation, Objectif, Feu",pts:2,type:"list",expect:X(["Zone|Zone d'installation|Zone d'installation du trinôme","Mission","Secteur","Consommation","Objectif","Feu"])},
+ {q:"Donner les missions du trinôme.",full:"SAFRANE\nSurveiller, Appuyer, Fouiller, Reconnaître ou s'emparer de, Assurer la liaison, Neutraliser ou détruire, Éclairer",pts:2,type:"list",expect:X(["Surveiller","Appuyer","Fouiller","Reconnaître|Reconnaitre|S'emparer de","Assurer la liaison","Neutraliser – détruire|Neutraliser|Détruire|Neutraliser détruire","Éclairer"])},
+ {q:"Donner la définition et les composantes de la mission SURVEILLER.",pts:5,type:"self",model:"Définition = Mission qui consiste pour une équipe (un trinôme), à partir d'un emplacement choisi ou désigné, à observer un secteur nettement délimité pour déceler toute activité ou indice d'activité ennemi (terrestre ou aérienne), dans le but d'alerter et renseigner son chef, afin d'assurer la sûreté du groupe.\n\nComposantes (se poster, dans l'ordre) = S'orienter, progresser, se camoufler, observer, mettre en œuvre son armement, communiquer et rendre compte, se protéger."},
+ {q:"Quelle est la réaction d'une équipe surprise à courte distance ?",full:"Riposte, poste, riposte.",pts:2,type:"text",answers:["Riposte, poste, riposte"],re:["riposte\\W+poste\\W+riposte"],corr:"Riposte, poste, riposte"},
+ {q:"Donner l'ordre de déplacement du trinôme pour une mission dynamique.",full:"MOICP\nMission, Objectif, Itinéraire, Conduite à tenir, Place du chef",pts:2,type:"list",expect:X(["Mission","Objectif","Itinéraire","Conduite à tenir","Place du chef"])}]},
 {id:"cbt",title:"CBT",items:[
  {q:"Donner les actes réflexes du combattant détaillés.",pts:2,type:"list",expect:X(["Progresser","Se protéger","Garder la liaison au sein du trinôme|Garder la liaison","Apprécier une distance","Rendre compte","Désigner un objectif","Communiquer","Observer","Se camoufler|Camoufler","S'orienter","Mettre en œuvre son armement","S'équiper"])},
  {q:"Donner les actes élémentaires du combattant.",pts:2,type:"list",expect:X(["Se déplacer","Se poster","Utiliser ses armes ou sa munition AT4CS|Utiliser ses armes|Utiliser sa munition AT4CS|Utiliser ses armes ou sa munition"])},
@@ -1049,6 +1049,7 @@ const CONTROLES=[
  {q:"Régler le tir. La correction est…",pts:6,type:"text",fig:"cible",note:"2 carrés = 3 clics sur l'organe de visée mécanique HK. Ramène le groupement dans le cercle noir sous le triangle.",answers:["Droite 8, Haut 6"],re:["droite\\W*8","haut\\W*6"],reAll:true}]}
 ];
 if(!NEXT_ON){const k=CONTROLES.findIndex(c=>c.id==="prochain");if(k>=0)CONTROLES.splice(k,1)}
+function perfectOf(it){if(it.full)return it.full;if(it.type==="self")return it.model;if(it.type==="list")return it.expect.map(a=>a[0]).join(", ");if(it.type==="grid")return it.rows.map(r=>r.label+" = "+r.alts[0]).join("\n");return it.corr||(it.answers&&it.answers[0])||String(it.a)}
 function ctrlTotal(c){return c.items.reduce((a,i)=>a+i.pts,0)}
 const half=x=>Math.round(x*2)/2;
 function gradeItem(it,v){
@@ -1087,14 +1088,17 @@ function renderCtrl(){const el=$("#v-controles");
   el.innerHTML=`<div class="card stack ex">
     <div class="row" style="justify-content:space-between;align-items:baseline"><h2 style="font-size:30px">${esc(c.title)}</h2><span class="pts">/${t}</span></div>
     ${c.skipped?`<p class="note">${esc(c.skipped)}</p>`:""}
-    ${CT.done?`<div class="stack" style="gap:6px"><span class="lbl">Ta note</span><div class="total">${fmt(got)}<small> / ${t}</small></div>${selfLeft?`<p class="note">Il te reste ${selfLeft} question${selfLeft>1?"s":""} à noter toi-même plus bas.</p>`:""}</div>`:""}
+    ${CT.done?`<div class="stack" style="gap:6px"><span class="lbl">Ta note</span><button class="linkbtn" type="button" id="goperfect" style="align-self:flex-start">Voir la copie parfaite</button><div class="total">${fmt(got)}<small> / ${t}</small></div>${selfLeft?`<p class="note">Il te reste ${selfLeft} question${selfLeft>1?"s":""} à noter toi-même plus bas.</p>`:""}</div>`:""}
     <form id="exf" autocomplete="off">${c.items.map((it,k)=>`<div class="exq" id="q${k}">
       <div class="exh"><p>${k+1}. ${esc(it.q)}</p><span class="pts${CT.done?" got":""}">${CT.done?(it.type==="self"?(CT.self[k]==null?"à noter":fmt(CT.self[k])):fmt(g[k].pts))+" / ":"/"}${it.pts}</span></div>
       ${it.note?`<p class="note">${esc(it.note)}</p>`:""}${it.fig==="cible"?FIGS.cible:""}${field(it,k)}${corr(it,k)}</div>`).join("")}</form>
+    ${CT.done?`<div class="card stack" id="perfect" style="gap:14px;background:var(--olive-soft)"><h2 style="font-size:26px">Copie parfaite</h2><p class="note">Ce qu'il faut écrire pour avoir tous les points.</p>
+      ${c.items.map((it,k)=>`<div class="stack" style="gap:4px"><p><b>${k+1}. ${esc(it.q)}</b> <span class="pts">/${it.pts}</span></p><span class="model">${esc(perfectOf(it))}</span>${it.modelFig==="FMD"?FMD_SVG:""}</div>`).join("")}</div>`:""}
     <div class="row" style="justify-content:space-between">
       <button class="linkbtn" id="exback">${CT.done?"Retour aux contrôles":"Abandonner"}</button>
       ${CT.done?`<div class="row"><button class="btn" id="exredo">Refaire</button><button class="btn primary" id="exsave" ${selfLeft||CT.saved?"disabled":""}>${CT.saved?"Note enregistrée":"Enregistrer ma note"}</button></div>`:`<button class="btn primary" id="exsub">Rendre ma copie</button>`}
     </div></div>`;
+  const gp=$("#goperfect");if(gp)gp.onclick=()=>$("#perfect").scrollIntoView({behavior:"smooth"});
   $("#exback").onclick=()=>{CT=null;renderCtrl();window.scrollTo(0,0)};
   const sub=$("#exsub");if(sub)sub.onclick=()=>{c.items.forEach((it,k)=>{if(it.type==="grid")CT.vals[k]=it.rows.map((_,j)=>$("#g"+k+"_"+j).value);else CT.vals[k]=$("#f"+k).value});CT.done=true;renderCtrl();window.scrollTo(0,0)};
   el.querySelectorAll("[data-self]").forEach(b=>b.onclick=()=>{const y=window.scrollY;CT.self[+b.dataset.self]=+b.dataset.v;renderCtrl();window.scrollTo(0,y)});

@@ -76,6 +76,7 @@ h1,h2,h3{font-family:var(--f-display);font-weight:800;letter-spacing:-.01em;line
 .btn:active,.chip:active,.choice:active:not(:disabled){transform:scale(.97)}
 .autonext{font-size:13px;color:var(--muted)}
 @media (prefers-reduced-motion: reduce){.anim,.vin,.fb,.choice.right,.choice.wrong{animation:none}}
+.nextchip{color:var(--bg)!important;background:var(--olive)!important}
 .ctrlchip{align-self:flex-start;font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--olive);background:var(--olive-soft);border-radius:999px;padding:3px 9px}
 .ta{width:100%;min-width:0;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);padding:10px 12px;border-radius:12px;font:inherit;resize:vertical}
 .fb.self{background:var(--sunk)}
@@ -248,6 +249,9 @@ td.term{font-weight:600;white-space:nowrap}
 </div>
 
 <script>
+/* Le « Prochain contrôle » disparaît tout seul à partir du 13 nov 2026 */
+const NEXT_ON=Date.now()<new Date(2026,10,13).getTime();
+
 /*ENGINE-START*/
 const NATO={A:"Alpha",B:"Bravo",C:"Charlie",D:"Delta",E:"Echo",F:"Foxtrot",G:"Golf",H:"Hotel",I:"India",J:"Juliett",K:"Kilo",L:"Lima",M:"Mike",N:"November",O:"Oscar",P:"Papa",Q:"Quebec",R:"Romeo",S:"Sierra",T:"Tango",U:"Uniform",V:"Victor",W:"Whiskey",X:"X-ray",Y:"Yankee",Z:"Zulu"};
 const NATO_ALTS={A:["Alfa"],J:["Juliet"],X:["Xray","X ray"],W:["Whisky"],Z:["Zoulou"]};
@@ -272,34 +276,36 @@ const CONTENT=[
    more:[{id:"diff",q:"« Se déplacer, se poster, utiliser ses armes ou sa munition AT4CS », ce sont les actes élémentaires…",a:"Du combattant",wrong:["Du trinôme","Du chef de groupe","De la section"],qcmOnly:true},
          {id:"diff2",q:"« Se déplacer, s'arrêter et tomber en garde, utiliser ses armes », ce sont les actes élémentaires…",a:"Du trinôme",wrong:["Du combattant","Du chef de groupe","De la section"],qcmOnly:true}]},
   {id:"deplacer",type:"list",ctrl:"CBT",ordered:true,posQ:"Se déplacer (1er acte élémentaire), quelle est la composante n°{n} ?",title:"Composantes du 1er acte élémentaire, se déplacer",items:["S'orienter","Progresser","Observer","Mettre en œuvre son armement","Communiquer","Rendre compte"],pool:"actes",countQ:"Combien de composantes pour se déplacer ?"},
-  {id:"poster",type:"list",ctrl:"CBT",ordered:true,posQ:"Se poster (2e acte élémentaire), quelle est la composante n°{n} ?",title:"Composantes du 2e acte élémentaire, se poster",items:["S'orienter","Progresser","Se camoufler","Observer","Mettre en œuvre son armement","Communiquer et rendre compte","Se protéger"],alts:{5:["Communiquer","Rendre compte"]},pool:"actes",countQ:"Combien de composantes pour se poster ?"},
+  {id:"poster",next:true,type:"list",ctrl:"CBT",ordered:true,posQ:"Se poster (2e acte élémentaire), quelle est la composante n°{n} ?",title:"Composantes du 2e acte élémentaire, se poster",items:["S'orienter","Progresser","Se camoufler","Observer","Mettre en œuvre son armement","Communiquer et rendre compte","Se protéger"],alts:{5:["Communiquer","Rendre compte"]},pool:"actes",countQ:"Combien de composantes pour se poster ?"},
   {id:"at4",type:"list",title:"Composantes du 3e acte élémentaire, utiliser ses armes ou sa munition AT4CS",items:["Mettre en œuvre son armement","Rendre compte"],pool:"actes",countQ:"Combien de composantes pour utiliser ses armes ou sa munition AT4CS ?"},
   {id:"poste",type:"list",ctrl:"CBT",title:"Les caractéristiques d'un bon poste de combat",items:["Voir","Invisible","Tirer","Abris","Liaison","Rechange"],alts:{1:["Être invisible"],2:["Pouvoir tirer"],3:["Abri"],5:["Poste de rechange"]},countQ:"Combien de caractéristiques pour un bon poste de combat ?",extraPool:["Confort","Hauteur","Éclairage","Proximité"]},
   {id:"milieu",type:"facts",title:"Missions du trinôme en milieu ouvert",lines:["Mission dynamique = une reconnaissance","Mission statique = surveiller"],
    qs:[{id:"dyn",q:"En milieu ouvert, une mission dynamique du trinôme, c'est quoi ?",a:"Une reconnaissance",alts:["reconnaissance","reconnaitre"],wrong:["Surveiller","Appuyer","Fouiller"]},
        {id:"stat",q:"En milieu ouvert, une mission statique du trinôme, c'est quoi ?",a:"Surveiller",alts:["surveillance"],wrong:["Une reconnaissance","Éclairer","Assurer la liaison"]}]},
-  {id:"moicp",type:"acro",ctrl:"CBT",sigle:"MOICP",title:"Ordre pour une mission dynamique",letters:[["M","Mission"],["O","Objectif"],["I","Itinéraire"],["C","Conduite à tenir"],["P","Place du chef"]]},
+  {id:"moicp",next:true,type:"acro",ctrl:"CBT",sigle:"MOICP",title:"Ordre pour une mission dynamique",letters:[["M","Mission"],["O","Objectif"],["I","Itinéraire"],["C","Conduite à tenir"],["P","Place du chef"]]},
   {id:"zmspcp",type:"acro",ctrl:"CBT",sigle:"ZMSPCP",title:"Ordre pour une mission statique",letters:[["Z","Zone"],["M","Mission"],["S","Secteur"],["P","Point particulier"],["C","Conduite à tenir"],["P","Place du chef"]]},
-  {id:"safrane",type:"acro",ctrl:"CBT",sigle:"SAFRANE",title:"Les missions du trinôme",letters:[["S","Surveiller"],["A","Appuyer"],["F","Fouiller"],["R","Reconnaître, s'emparer de"],["A","Assurer la liaison"],["N","Neutraliser, détruire"],["E","Éclairer"]],alts:{3:["Reconnaître","S'emparer de"],5:["Neutraliser","Détruire"]}},
-  {id:"defmissions",type:"facts",ctrl:"CBT",title:"Définitions mot pour mot",lines:["SURVEILLER = Mission qui consiste pour une équipe (un trinôme), à partir d'un emplacement choisi ou désigné, à observer un secteur nettement délimité pour déceler toute activité ou indice d'activité ennemi (terrestre ou aérienne), dans le but d'alerter et renseigner son chef, afin d'assurer la sûreté du groupe.","RECONNAÎTRE = Mission consistant à aller chercher le renseignement d'ordre tactique ou technique, sur le terrain ou sur l'ennemi, en un point donné, en engageant éventuellement le combat."],
+  {id:"safrane",next:true,type:"acro",ctrl:"CBT",sigle:"SAFRANE",title:"Les missions du trinôme",letters:[["S","Surveiller"],["A","Appuyer"],["F","Fouiller"],["R","Reconnaître, s'emparer de"],["A","Assurer la liaison"],["N","Neutraliser, détruire"],["E","Éclairer"]],alts:{3:["Reconnaître","S'emparer de"],5:["Neutraliser","Détruire"]}},
+  {id:"defmissions",next:true,type:"facts",ctrl:"CBT",title:"Définitions mot pour mot",lines:["SURVEILLER = Mission qui consiste pour une équipe (un trinôme), à partir d'un emplacement choisi ou désigné, à observer un secteur nettement délimité pour déceler toute activité ou indice d'activité ennemi (terrestre ou aérienne), dans le but d'alerter et renseigner son chef, afin d'assurer la sûreté du groupe.","RECONNAÎTRE = Mission consistant à aller chercher le renseignement d'ordre tactique ou technique, sur le terrain ou sur l'ennemi, en un point donné, en engageant éventuellement le combat."],
    qs:[{id:"surv",self:true,q:"Donne mot pour mot la définition de la mission SURVEILLER.",a:"Mission qui consiste pour une équipe (un trinôme), à partir d'un emplacement choisi ou désigné, à observer un secteur nettement délimité pour déceler toute activité ou indice d'activité ennemi (terrestre ou aérienne), dans le but d'alerter et renseigner son chef, afin d'assurer la sûreté du groupe."},
        {id:"reco",self:true,q:"Donne mot pour mot la définition de la mission RECONNAÎTRE.",a:"Mission consistant à aller chercher le renseignement d'ordre tactique ou technique, sur le terrain ou sur l'ennemi, en un point donné, en engageant éventuellement le combat."},
        {id:"survq",q:"« Observer un secteur nettement délimité pour déceler toute activité ou indice d'activité ennemi », c'est la mission…",a:"Surveiller",wrong:["Reconnaître","Éclairer","Appuyer"]},
        {id:"recoq",q:"« Aller chercher le renseignement d'ordre tactique ou technique, en engageant éventuellement le combat », c'est la mission…",a:"Reconnaître",wrong:["Surveiller","Fouiller","Éclairer"]},
        {id:"survbut",q:"Dans la mission SURVEILLER, dans quel but on observe ?",a:"Alerter et renseigner son chef, afin d'assurer la sûreté du groupe",wrong:["Détruire l'ennemi dès qu'il apparaît","Aller chercher le renseignement sur le terrain","Appuyer la progression d'une autre équipe"],qcmOnly:true}]},
-  {id:"actelem",type:"list",ctrl:"CBT",title:"Les 3 actes élémentaires au sein du trinôme",items:["Se déplacer","S'arrêter, tomber en garde","Utiliser ses armes"],alts:{1:["S'arrêter","Tomber en garde"],2:["Utiliser ses armes","Utiliser son arme"]},countQ:"Combien y a-t-il d'actes élémentaires au sein du trinôme ?",extraPool:["S'équiper","Se camoufler","Rendre compte","Observer"]},
+  {id:"surprise",next:true,type:"facts",title:"Équipe surprise à courte distance",lines:["Réaction d'une équipe surprise à courte distance = riposte, poste, riposte."],
+   qs:[{id:"rep",q:"Quelle est la réaction d'une équipe surprise à courte distance ?",a:"Riposte, poste, riposte",alts:["riposte poste riposte","riposte - poste - riposte"],wrong:["Se camoufler, observer, rendre compte","Décrocher, se replier, rendre compte","Se poster, observer, tirer"]}]},
+  {id:"actelem",next:true,type:"list",ctrl:"CBT",title:"Les 3 actes élémentaires au sein du trinôme",items:["Se déplacer","S'arrêter, tomber en garde","Utiliser ses armes"],alts:{1:["S'arrêter","Tomber en garde"],2:["Utiliser ses armes","Utiliser son arme"]},countQ:"Combien y a-t-il d'actes élémentaires au sein du trinôme ?",extraPool:["S'équiper","Se camoufler","Rendre compte","Observer"]},
   {id:"ordretri",type:"list",title:"L'ordre dans le trinôme",ordered:true,items:["GV1","CDE","GV2"],noPool:true,posQ:"Dans le trinôme, qui est en position n°{n} ?",
    more:[{id:"cde",q:"Dans le trinôme, qui est au milieu ?",a:"CDE",alts:["chef d'equipe","le CDE"],wrong:["GV1","GV2","Le chef de groupe"]},
          {id:"cdeg",q:"Qui donne les cadres d'ordres à ses GV ?",a:"Le chef d'équipe (CDE)",alts:["CDE","chef d'equipe"],wrong:["Le GV1","Le GV2","Le chef de section"]}]},
-  {id:"moyensdep",type:"list",ctrl:"CBT",title:"Les 3 modes de progression",items:["La marche","Le bond","L'appui mutuel"],alts:{1:["Le bond collectif","Bond"],2:["Appui mutuel","L'appui mutuel au sein du trinôme"]},countQ:"Combien y a-t-il de modes de progression ?",extraPool:["La course","Le rampé","La reptation","La glissade"]},
+  {id:"moyensdep",next:true,type:"list",ctrl:"CBT",title:"Les 3 modes de progression",items:["La marche","Le bond","L'appui mutuel"],alts:{1:["Le bond collectif","Bond"],2:["Appui mutuel","L'appui mutuel au sein du trinôme"]},countQ:"Combien y a-t-il de modes de progression ?",extraPool:["La course","Le rampé","La reptation","La glissade"]},
   {id:"deplacements",type:"list",title:"Variantes de l'appui mutuel en équipe",items:["En tiroir","En perroquet","Perroquet variante"],countQ:"Combien de variantes de l'appui mutuel ?",extraPool:["En chenille","En bond","En tenaille","En échelon"],
    more:[{id:"type",q:"« En tiroir » et « en perroquet », ce sont des modes de progression par…",a:"L'appui mutuel en équipe",wrong:["Le bond","La marche","Le rampé"],qcmOnly:true}]},
   {id:"formations",type:"list",title:"Les formations du trinôme",items:["En ligne","En colonne","En triangle"],countQ:"Combien de formations pour le trinôme ?",extraPool:["En losange","En flèche","En carré","En dispersé"]},
-  {id:"pif",type:"acro",ctrl:"CBT",sigle:"PIF",title:"Cadre d'ordre pour se déplacer",letters:[["P","Point à atteindre"],["I","Itinéraire"],["F","Formation"]]},
-  {id:"ffh",type:"acro",ctrl:"CBT",sigle:"FFH",title:"Cadre d'ordre pour tomber en garde",letters:[["F","Face à"],["F","Formation"],["H","Halte"]]},
-  {id:"zms",type:"acro",sigle:"ZMS",title:"Cadre d'ordre pour un arrêt court",letters:[["Z","Zone d'installation du trinôme"],["M","Mission"],["S","Secteur"]]},
-  {id:"pmspcp",type:"acro",sigle:"PMSPCP",title:"Cadre d'ordre pour un arrêt long",letters:[["P","Place individuelle"],["M","Mission"],["S","Secteur de surveillance"],["P","Point particulier"],["C","Conduite à tenir"],["P","Place du chef de groupe"]]},
-  {id:"cof",type:"acro",sigle:"COF",title:"Cadre d'ordre de tir au fusil d'assaut",letters:[["C","Consommation"],["O","Objectif"],["F","Feu"]]},
+  {id:"pif",next:true,type:"acro",ctrl:"CBT",sigle:"PIF",title:"Cadre d'ordre pour se déplacer",letters:[["P","Point à atteindre"],["I","Itinéraire"],["F","Formation"]]},
+  {id:"ffh",next:true,type:"acro",ctrl:"CBT",sigle:"FFH",title:"Cadre d'ordre pour tomber en garde",letters:[["F","Face à"],["F","Formation"],["H","Halte"]]},
+  {id:"zms",next:true,type:"acro",sigle:"ZMS",title:"Cadre d'ordre pour un arrêt court",letters:[["Z","Zone d'installation du trinôme"],["M","Mission"],["S","Secteur"]]},
+  {id:"pmspcp",next:true,type:"acro",sigle:"PMSPCP",title:"Cadre d'ordre pour un arrêt long",letters:[["P","Place individuelle"],["M","Mission"],["S","Secteur de surveillance"],["P","Point particulier"],["C","Conduite à tenir"],["P","Place du chef de groupe"]]},
+  {id:"cof",next:true,type:"acro",sigle:"COF",title:"Cadre d'ordre de tir au fusil d'assaut",letters:[["C","Consommation"],["O","Objectif"],["F","Feu"]]},
   {id:"hcodf",type:"acro",ctrl:"CBT",sigle:"HCODF",title:"Cadre d'ordre de tir pour les armes à tir tendu (tir collectif)",note:"Le corrigé du contrôle dit D = Distance. Tes notes disaient Débit, les deux sont acceptés.",letters:[["H","Hausse"],["C","Consommation"],["O","Objectif"],["D","Distance"],["F","Feu"]],alts:{3:["Débit"]},
    more:[{id:"coll",q:"Le cadre d'ordre pour un tir à l'arme collective, c'est…",a:"HCODF",wrong:["COF","ODF","GDNOF"]}]},
   {id:"gdnof",type:"acro",sigle:"GDNOF",title:"Cadre d'ordre pour la grenade à fusil",letters:[["G","Genre"],["D","Distance"],["N","Nombre"],["O","Objectif"],["F","Feu"]]},
@@ -644,7 +650,7 @@ function buildBank(){
     const sigles=th.blocks.filter(b=>b.type==="acro").map(b=>b.sigle);
     const byId=Object.fromEntries(th.blocks.map(b=>[b.id,b]));
     for(const b of th.blocks){
-      const add=(sub,make,ctrl)=>bank.push({id:th.id+"."+b.id+"."+sub,theme:th.id,block:b.id,blockTitle:b.title,ctrl:ctrl||b.ctrl||null,make});
+      const add=(sub,make,ctrl)=>bank.push({id:th.id+"."+b.id+"."+sub,theme:th.id,block:b.id,blockTitle:b.title,ctrl:ctrl||b.ctrl||null,next:NEXT_ON&&!!b.next,make});
       const factQs=(qs)=>qs.forEach(f=>add("f-"+f.id,()=>{
         if(f.self)return SELF(f.q,f.a);
         if(typeof f.a==="number")return NUM(f.q,f.a,f.unit,{tol:f.tol!=null?f.tol:(Number.isInteger(f.a)?0:undefined),accept:f.accept});
@@ -793,7 +799,7 @@ const R={status:"local"};
 function rec(id,ok){const r=stats.q[id]||{ok:0,ko:0,st:0};if(ok){r.ok++;r.st=(r.st||0)+1}else{r.ko++;r.st=0}r.t=Date.now();stats.q[id]=r;stats.total++;if(ok)stats.correct++;stats.updatedAt=Date.now()}
 function mastered(id){const r=stats.q[id];return !!r&&(r.st||0)>=2}
 function isWeak(id){const r=stats.q[id];return !!r&&r.ko>0&&(r.st||0)<2}
-function weight(id){const b=BYID[id]&&BYID[id].ctrl?1.4:1;return b*weight0(id)}
+function weight(id){const t=BYID[id];const b=t&&t.next?1.8:(t&&t.ctrl?1.4:1);return b*weight0(id)}
 function weight0(id){const r=stats.q[id];if(!r)return 3;const st=r.st||0;if(st>=3)return 0.35;if(st>=2)return 0.8;return 2+Math.min(r.ko,5)*1.5}
 function themeProgress(tid){const ids=BANK.filter(t=>t.theme===tid).map(t=>t.id);const m=ids.filter(mastered).length;const seen=ids.filter(i=>stats.q[i]).length;return {n:ids.length,m,seen,weak:ids.filter(isWeak).length}}
 function masteryAll(){const m=BANK.filter(t=>mastered(t.id)).length;return {m,n:BANK.length}}
@@ -864,7 +870,7 @@ function startSession(ids){if(!ids.length)return;S={items:ids.map(id=>({id,q:BYI
 function renderQuestion(el){const it=S.items[S.i];const tpl=BYID[it.id];const q=it.q;const th=THEMES[tpl.theme];
   el.innerHTML=`<div class="card stack anim" id="qcard">
     <div class="q-head"><span class="lbl">${esc(th.name)} · ${esc(tpl.blockTitle)}</span><span class="lbl">${S.i+1} / ${S.items.length}</span></div>
-    ${tpl.ctrl?`<span class="ctrlchip">Tombé au contrôle ${esc(tpl.ctrl)}</span>`:""}
+    ${tpl.next?`<span class="ctrlchip nextchip">Prochain contrôle</span>`:""}${tpl.ctrl?`<span class="ctrlchip">Tombé au contrôle ${esc(tpl.ctrl)}</span>`:""}
     <div class="prog"><i id="progi" style="width:${Math.max(0,S.i-1)/S.items.length*100}%"></i></div>
     <p class="prompt">${esc(q.prompt)}</p>${q.fig||""}
     ${q.kind==="self"?`<form class="stack" id="sf" style="gap:8px" autocomplete="off"><textarea id="sans" rows="5" class="ta" placeholder="Écris ta réponse, puis compare avec le corrigé" aria-label="Ta réponse"></textarea><div class="row"><button class="btn primary" type="submit">Voir le corrigé</button></div></form>`:q.kind==="qcm"?`<div class="choices">${q.choices.map((c,k)=>`<button class="choice" data-c="${k}"><span class="k">${k+1}</span><span>${esc(c)}</span></button>`).join("")}</div>`
@@ -943,6 +949,7 @@ function blockHTML(th,b){const head=(title,tag)=>`<div class="block-h"><h3>${esc
   if(b.svgKey&&FIGS[b.svgKey])body+=FIGS[b.svgKey];
   const n=BANK.filter(t=>t.theme===th.id&&t.block===b.id).length;
   if(b.ctrl)body=`<span class="ctrlchip">Tombé au contrôle ${esc(b.ctrl)}</span>`+body;
+  if(NEXT_ON&&b.next)body=`<span class="ctrlchip nextchip">Prochain contrôle</span>`+body;
   return `<article class="block${wide?" wide":""}" id="b-${th.id}-${b.id}">${head(b.title,b.type==="acro"?b.sigle:"")}${body}
     <div class="row" style="justify-content:space-between;margin-top:auto"><span class="lbl">${n} question${n>1?"s":""}</span><button class="btn small" data-drill="${th.id}.${b.id}">S'entraîner</button></div></article>`}
 function renderFiches(){const el=$("#v-fiches");const th=THEMES[ficheTheme];
@@ -990,6 +997,15 @@ function renderResults(){const el=$("#v-resultats");const all=masteryAll();const
 /* --- Contrôles --- */
 const X=a=>a.map(x=>x.split("|"));
 const CONTROLES=[
+{id:"prochain",title:"Prochain contrôle",skipped:"Questions du prochain contrôle. Barème pas encore connu, 2 points par question et 5 pour la définition.",items:[
+ {q:"Donner les actes élémentaires du trinôme.",pts:2,type:"list",expect:X(["Se déplacer","S'arrêter tomber en garde|Tomber en garde|S'arrêter","Utiliser ses armes|Utiliser son arme"])},
+ {q:"Donner les 3 modes de progression du trinôme.",pts:2,type:"list",expect:X(["La marche|Marche","Le bond|Bond","L'appui mutuel|Appui mutuel"])},
+ {q:"Donner le commandement du trinôme pour se déplacer et pour s'arrêter (tomber en garde).",pts:2,type:"list",expect:X(["Point à atteindre","Itinéraire","Formation","Face à","Formation","Halte"])},
+ {q:"Donner l'ordre d'arrêt et l'ordre de tir.",pts:2,type:"list",expect:X(["Zone|Zone d'installation|Zone d'installation du trinôme","Mission","Secteur","Consommation","Objectif","Feu"])},
+ {q:"Donner les missions du trinôme.",pts:2,type:"list",expect:X(["Surveiller","Appuyer","Fouiller","Reconnaître|Reconnaitre|S'emparer de","Assurer la liaison","Neutraliser – détruire|Neutraliser|Détruire|Neutraliser détruire","Éclairer"])},
+ {q:"Donner la définition et les composantes de la mission SURVEILLER.",pts:5,type:"self",model:"Définition = Mission qui consiste pour une équipe (un trinôme), à partir d'un emplacement choisi ou désigné, à observer un secteur nettement délimité pour déceler toute activité ou indice d'activité ennemi (terrestre ou aérienne), dans le but d'alerter et renseigner son chef, afin d'assurer la sûreté du groupe.\nComposantes (se poster, dans l'ordre) = S'orienter, progresser, se camoufler, observer, mettre en œuvre son armement, communiquer et rendre compte, se protéger."},
+ {q:"Quelle est la réaction d'une équipe surprise à courte distance ?",pts:2,type:"text",answers:["Riposte, poste, riposte"],re:["riposte\\W+poste\\W+riposte"],corr:"Riposte, poste, riposte"},
+ {q:"Donner l'ordre de déplacement du trinôme pour une mission dynamique.",pts:2,type:"list",expect:X(["Mission","Objectif","Itinéraire","Conduite à tenir","Place du chef"])}]},
 {id:"cbt",title:"CBT",items:[
  {q:"Donner les actes réflexes du combattant détaillés.",pts:2,type:"list",expect:X(["Progresser","Se protéger","Garder la liaison au sein du trinôme|Garder la liaison","Apprécier une distance","Rendre compte","Désigner un objectif","Communiquer","Observer","Se camoufler|Camoufler","S'orienter","Mettre en œuvre son armement","S'équiper"])},
  {q:"Donner les actes élémentaires du combattant.",pts:2,type:"list",expect:X(["Se déplacer","Se poster","Utiliser ses armes ou sa munition AT4CS|Utiliser ses armes|Utiliser sa munition AT4CS|Utiliser ses armes ou sa munition"])},
@@ -1032,6 +1048,7 @@ const CONTROLES=[
  {q:"Donner mot pour mot les 4 règles ISTC.",pts:6,type:"self",model:"1. Une arme doit toujours être considérée comme chargée.\n2. Ne jamais pointer ou laisser pointer le canon d'une arme sur quelque chose que l'on ne veut pas détruire.\n3. Garder l'index hors de la détente tant que les organes de visée ne sont pas sur l'objectif.\n4. Être sûr de son objectif et de son environnement."},
  {q:"Régler le tir. La correction est…",pts:6,type:"text",fig:"cible",note:"2 carrés = 3 clics sur l'organe de visée mécanique HK. Ramène le groupement dans le cercle noir sous le triangle.",answers:["Droite 8, Haut 6"],re:["droite\\W*8","haut\\W*6"],reAll:true}]}
 ];
+if(!NEXT_ON){const k=CONTROLES.findIndex(c=>c.id==="prochain");if(k>=0)CONTROLES.splice(k,1)}
 function ctrlTotal(c){return c.items.reduce((a,i)=>a+i.pts,0)}
 const half=x=>Math.round(x*2)/2;
 function gradeItem(it,v){
@@ -1046,8 +1063,8 @@ function gradeItem(it,v){
 }
 let CT=null;
 function renderCtrl(){const el=$("#v-controles");
-  if(!CT){el.innerHTML=`<div class="stack"><div class="card stack"><h2 style="font-size:28px">Anciens contrôles</h2>
-    <p class="note">Refais chaque épreuve comme le jour J, avec le barème. Les réponses à liste sont corrigées automatiquement. Pour les questions mot pour mot, tu compares avec le corrigé et tu te notes.</p></div>
+  if(!CT){el.innerHTML=`<div class="stack"><div class="card stack"><h2 style="font-size:28px">Contrôles</h2>
+    <p class="note">${NEXT_ON?"Le prochain contrôle est en premier. ":""}Refais chaque épreuve comme le jour J, avec le barème. Les réponses à liste sont corrigées automatiquement. Pour les questions mot pour mot, tu compares avec le corrigé et tu te notes.</p></div>
     <div class="ctl">${CONTROLES.map(c=>{const r=(stats.ctrl||{})[c.id];const t=ctrlTotal(c);return `<div class="card stack" style="gap:10px"><div class="row" style="justify-content:space-between;align-items:baseline"><h2 style="font-size:26px">${esc(c.title)}</h2><span class="pts">${c.items.length} questions · /${t}</span></div>
       ${c.skipped?`<p class="note">${esc(c.skipped)}</p>`:""}
       <p class="note">${r?`Dernière note ${fmt(r.last)}/${t} · meilleure ${fmt(r.best)}/${t}`:"Pas encore fait."}</p>
